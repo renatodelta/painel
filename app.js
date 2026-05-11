@@ -25,7 +25,14 @@ const UPCOMING_48H = [
     { day: 'Amanhã', time: '16:00', member: 'elizabeth', desc: 'Médico' }
 ];
 
-let photoUrls = ['assets/family.png'];
+let photoUrls = [
+    "https://lh3.googleusercontent.com/pw/AP1GczPxsvyUBIuEonS1jjQexvjQL9xdYlCfIdRfBJQrpPMZZy_RLe3zBx5VZlG_1UuKSlIC75EbAOZBK0sohXjzHjYju3MsC9vzCcgnMLN44qVAHirpQm0w",
+    "https://lh3.googleusercontent.com/pw/AP1GczPYCgypA_Ss36_qhbirHJ_EkFt0k8Y7kvkeKRYBG8Cz1EwIhfu-AxlEeFltjmz-zHT30TPbTM_CGeqPSKEh82jVy9_V7v5TJk7K5Qd08E8ci1rTRm_B",
+    "https://lh3.googleusercontent.com/pw/AP1GczPyg1z2svJC9JpmGQeb70usdCgtcvHLQA3-ryQ0S5trj484qFasGzbATN-qo7_psyrhNuulP6XKSaZPJKpED2llnab4QYYOnNVuskiLNnM7tItaNCaZ",
+    "https://lh3.googleusercontent.com/pw/AP1GczPYIvIb1YecXzrF5fjS_8BJ9ky8zJHugGrIWX-qFyJX6ECMV-NklxyhTKgaWZAQLOBSF75JmCSEM5HIoHowZzTHZYkW26XrOYpslkDRs3zgkHurdo9h",
+    "https://lh3.googleusercontent.com/pw/AP1GczPzcTWqWakjAmPSJMtf4WX-GnGGVOKKRV3FdWbAiYAlb4hExleSCNRGfTR0u25oyYs_UMG8RHbDyhpEnzX5tmu567t0-hvrtHHAzFebsav0LlPxdFEY",
+    "https://lh3.googleusercontent.com/pw/AP1GczPzN8m2t3sJKRgvTde62WQjKRw70AbjweuLxC-753R9wTNeThgc8NSem_cCTGnSanSmel95sXNrsZzWCd1ZVjew-nJYSabuYW_YIKWaHYskyxNhp_1-"
+];
 let currentPhotoIdx = 0;
 
 // Relógio e Data
@@ -54,12 +61,10 @@ function renderCalendar() {
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     
-    // Espaços vazios
     for (let i = 0; i < firstDay; i++) {
         container.innerHTML += '<div class="day-cell empty"></div>';
     }
     
-    // Dias do mês
     for (let day = 1; day <= daysInMonth; day++) {
         const isToday = day === now.getDate() ? 'today' : '';
         const dayEvents = FAMILY_EVENTS.filter(e => e.day === day);
@@ -106,25 +111,6 @@ function updateQuote() {
     if (authorEl) authorEl.textContent = `— ${randomQuote.author}`;
 }
 
-// Google Photos Slideshow (Simplificado com Fallback)
-async function fetchGooglePhotos() {
-    try {
-        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(GOOGLE_PHOTOS_ALBUM_URL)}`;
-        const response = await fetch(proxyUrl);
-        const text = await response.text();
-        const regex = /https:\/\/lh3\.googleusercontent\.com\/pw\/[A-Za-z0-9\-_]+/g;
-        const matches = text.match(regex);
-
-        if (matches && matches.length > 0) {
-            photoUrls = [...new Set(matches)].filter(url => url.length > 100).slice(0, 30);
-            document.getElementById('photo-status').textContent = `${photoUrls.length} Fotos da Família`;
-        }
-    } catch (e) {
-        console.warn("Usando fotos locais/fallback.");
-    }
-    startSlideshow();
-}
-
 function startSlideshow() {
     const imgEl = document.getElementById('slideshow-img');
     if (!imgEl) return;
@@ -146,10 +132,10 @@ function init() {
     renderCalendar();
     renderUpcoming();
     updateQuote();
-    fetchGooglePhotos();
+    startSlideshow();
     
     setInterval(updateClock, 60000);
-    setInterval(updateQuote, 3600000); // Muda frase a cada hora
+    setInterval(updateQuote, 3600000);
 }
 
 init();
