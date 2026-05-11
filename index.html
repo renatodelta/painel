@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel da Família - Modern TV</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="background-overlay"></div>
+
+    <header class="main-header">
+        <div class="header-left">
+            <div id="current-date" class="date-text">Domingo, 10 de Maio de 2025</div>
+        </div>
+        <div class="header-right">
+            <div id="clock" class="clock-text">10:10</div>
+        </div>
+    </header>
+
+    <main class="tv-dashboard">
+        <!-- Coluna Esquerda: Clima e Frase -->
+        <div class="col left-col">
+            <section class="card weather-card glass">
+                <div class="weather-info">
+                    <span class="city">São Paulo</span>
+                    <div class="temp-main">
+                        <i class="fa-solid fa-cloud-sun"></i>
+                        <span id="temp">24°</span>
+                    </div>
+                    <span class="condition">Parcialmente Nublado</span>
+                </div>
+                <div class="weather-forecast">
+                    <div class="f-item"><span>Seg</span><i class="fa-solid fa-sun"></i><span>26°</span></div>
+                    <div class="f-item"><span>Ter</span><i class="fa-solid fa-cloud"></i><span>22°</span></div>
+                    <div class="f-item"><span>Qua</span><i class="fa-solid fa-cloud-rain"></i><span>19°</span></div>
+                </div>
+            </section>
+
+            <section class="card stoic-card glass">
+                <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
+                <p id="stoic-quote">"A felicidade de sua vida depende da qualidade de seus pensamentos."</p>
+                <span id="stoic-author">— Marco Aurélio</span>
+            </section>
+        </div>
+
+        <!-- Coluna Central: Calendário Grande -->
+        <div class="col center-col">
+            <section class="card calendar-full glass">
+                <div class="calendar-header">
+                    <button class="cal-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                    <h2 id="calendar-month">Maio 2025</h2>
+                    <button class="cal-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <div class="calendar-grid">
+                    <div class="day-name">Dom</div>
+                    <div class="day-name">Seg</div>
+                    <div class="day-name">Ter</div>
+                    <div class="day-name">Qua</div>
+                    <div class="day-name">Qui</div>
+                    <div class="day-name">Sex</div>
+                    <div class="day-name">Sáb</div>
+
+                    <!-- Calendar days will be injected by JS -->
+                    <div id="calendar-days" class="days-container"></div>
+                </div>
+                <div class="family-legend">
+                    <span class="leg-item renato">Renato</span>
+                    <span class="leg-item elizabeth">Elizabeth</span>
+                    <span class="leg-item luiza">Luiza</span>
+                    <span class="leg-item camila">Camila</span>
+                    <span class="leg-item pedro">Pedro Henrique</span>
+                </div>
+            </section>
+        </div>
+
+        <!-- Coluna Direita: Google Photos e 48h -->
+        <div class="col right-col">
+            <section class="card photos-card glass">
+                <div class="photo-container">
+                    <img id="slideshow-img" src="assets/family.png" alt="Family Photo">
+                    <div class="photo-overlay">
+                        <i class="fa-brands fa-google-photos"></i>
+                        <span id="photo-status">Álbum de Família</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card upcoming-card glass">
+                <div class="card-header-mini">Próximas 48 Horas</div>
+                <div class="commitments-list" id="upcoming-list">
+                    <!-- Commitments injected by JS -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
