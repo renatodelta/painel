@@ -88,46 +88,89 @@ body {
 .card {
     border-radius: 40px;
     border: 1.5px solid var(--glass-border);
-    background: var(--glass-bg);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
     backdrop-filter: var(--glass-blur);
     overflow: hidden;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.5);
 }
 
-/* Weather Card */
+/* Weather Card Premium */
 .weather-card {
-    padding: 40px;
+    padding: 30px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    flex-grow: 0.4;
+    flex-grow: 0.5;
 }
 
-.temp-main {
-    font-size: 90px;
-    font-weight: 200;
+.weather-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-main);
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.location {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.mini-icon { opacity: 0.5; font-size: 14px; cursor: pointer; }
+
+.weather-main {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.temp-display {
     display: flex;
     align-items: center;
     gap: 20px;
-    margin: 20px 0;
+    font-size: 80px;
+    font-weight: 200;
 }
 
-.temp-main i { color: #ffcc00; font-size: 70px; }
+.weather-icon-main { font-size: 60px; color: var(--text-dim); }
 
-.weather-forecast {
+.rain-alert {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 18px;
+    color: var(--text-dim);
+    line-height: 1.4;
+}
+
+.rain-alert i { font-size: 24px; color: var(--accent-primary); }
+
+.hourly-forecast {
     display: flex;
     justify-content: space-between;
-    padding-top: 30px;
-    border-top: 1px solid var(--glass-border);
+    gap: 10px;
 }
 
-.f-item {
+.h-item {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    font-size: 20px;
+    gap: 15px;
+    padding: 20px 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    font-size: 16px;
+    transition: all 0.3s ease;
 }
+
+.h-item i { font-size: 24px; color: var(--accent-primary); }
+.h-temp { font-size: 20px; font-weight: 600; }
+.h-hum { font-size: 14px; color: var(--text-dim); display: flex; align-items: center; gap: 4px; }
+.h-item.active { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--glass-border); }
 
 /* Stoic Card */
 .stoic-card {

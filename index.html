@@ -28,18 +28,55 @@
         <!-- Coluna Esquerda: Clima e Frase -->
         <div class="col left-col">
             <section class="card weather-card glass">
-                <div class="weather-info">
-                    <span class="city">São Paulo</span>
-                    <div class="temp-main">
-                        <i class="fa-solid fa-cloud-sun"></i>
-                        <span id="temp">24°</span>
+                <div class="weather-header">
+                    <div class="location">
+                        <i class="fa-solid fa-location-arrow"></i>
+                        <span class="city">São José dos Campos</span>
+                        <i class="fa-solid fa-chevron-down mini-icon"></i>
                     </div>
-                    <span class="condition">Parcialmente Nublado</span>
+                    <i class="fa-solid fa-ellipsis mini-icon"></i>
                 </div>
-                <div class="weather-forecast">
-                    <div class="f-item"><span>Seg</span><i class="fa-solid fa-sun"></i><span>26°</span></div>
-                    <div class="f-item"><span>Ter</span><i class="fa-solid fa-cloud"></i><span>22°</span></div>
-                    <div class="f-item"><span>Qua</span><i class="fa-solid fa-cloud-rain"></i><span>19°</span></div>
+                
+                <div class="weather-main">
+                    <div class="temp-display">
+                        <span id="temp">16°</span>
+                        <div class="weather-icon-main">
+                            <i class="fa-solid fa-cloud"></i>
+                        </div>
+                    </div>
+                    <div class="weather-summary">
+                        <div class="rain-alert">
+                            <i class="fa-solid fa-umbrella"></i>
+                            <span>Espere 2 dias de chuva a partir de Hoje.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hourly-forecast">
+                    <div class="h-item">
+                        <span>23:00</span>
+                        <i class="fa-solid fa-cloud"></i>
+                        <span class="h-temp">16°</span>
+                        <span class="h-hum"><i class="fa-solid fa-droplet"></i> 13%</span>
+                    </div>
+                    <div class="h-item active">
+                        <span>00:00</span>
+                        <i class="fa-solid fa-cloud"></i>
+                        <span class="h-temp">16°</span>
+                        <span class="h-hum"><i class="fa-solid fa-droplet"></i> 15%</span>
+                    </div>
+                    <div class="h-item">
+                        <span>01:00</span>
+                        <i class="fa-solid fa-cloud"></i>
+                        <span class="h-temp">16°</span>
+                        <span class="h-hum"><i class="fa-solid fa-droplet"></i> 21%</span>
+                    </div>
+                    <div class="h-item">
+                        <span>02:00</span>
+                        <i class="fa-solid fa-cloud"></i>
+                        <span class="h-temp">15°</span>
+                        <span class="h-hum"><i class="fa-solid fa-droplet"></i> 23%</span>
+                    </div>
                 </div>
             </section>
 
