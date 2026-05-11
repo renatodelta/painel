@@ -25,6 +25,14 @@ const UPCOMING_48H = [
     { day: 'Amanhã', time: '16:00', member: 'elizabeth', desc: 'Médico' }
 ];
 
+const SHOPPING_LIST = [
+    "Leite Integral", "Ovos Caipira", "Pão de Forma", "Banana Nanica", 
+    "Maçã Gala", "Café em Pó", "Açúcar Refinado", "Arroz Branco", 
+    "Feijão Preto", "Detergente", "Papel Higiênico", "Sabonete",
+    "Manteiga", "Iogurte Natural", "Queijo Prata", "Peito de Peru",
+    "Tomate Cereja", "Alface Fresca", "Cebola", "Alho"
+];
+
 let photoUrls = [
     "https://lh3.googleusercontent.com/pw/AP1GczPxsvyUBIuEonS1jjQexvjQL9xdYlCfIdRfBJQrpPMZZy_RLe3zBx5VZlG_1UuKSlIC75EbAOZBK0sohXjzHjYju3MsC9vzCcgnMLN44qVAHirpQm0w",
     "https://lh3.googleusercontent.com/pw/AP1GczPYCgypA_Ss36_qhbirHJ_EkFt0k8Y7kvkeKRYBG8Cz1EwIhfu-AxlEeFltjmz-zHT30TPbTM_CGeqPSKEh82jVy9_V7v5TJk7K5Qd08E8ci1rTRm_B",
@@ -101,6 +109,22 @@ function renderUpcoming() {
     });
 }
 
+// Lista de Compras
+function renderShoppingList() {
+    const list = document.getElementById('shopping-list');
+    if (!list) return;
+    list.innerHTML = '';
+    
+    SHOPPING_LIST.forEach(item => {
+        list.innerHTML += `
+            <li class="s-item">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span>${item}</span>
+            </li>
+        `;
+    });
+}
+
 // Frase Estoica
 function updateQuote() {
     const quoteEl = document.getElementById('stoic-quote');
@@ -132,6 +156,7 @@ function init() {
     renderCalendar();
     renderUpcoming();
     updateQuote();
+    renderShoppingList();
     startSlideshow();
     
     setInterval(updateClock, 60000);
