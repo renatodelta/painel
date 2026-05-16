@@ -337,18 +337,20 @@ async function updateMemory() {
             const randomIdx = Math.floor(Math.random() * memories.length);
             const memory = memories[randomIdx];
 
+            // Se for link do Google (tem baseUrl), adiciona o tamanho. Se for Unsplash, usa direto.
+            const finalUrl = memory.url.includes('googleusercontent') ? memory.url + "=w1200" : memory.url;
+            console.log("Tentando carregar foto:", finalUrl);
+
             imgEl.style.opacity = 0;
             
             setTimeout(() => {
-                imgEl.src = memory.url + "=w1200";
+                imgEl.src = finalUrl;
                 if (captionEl) captionEl.textContent = memory.caption;
                 imgEl.style.opacity = 1;
-            }, 1000);
-        } else {
-            if (captionEl) captionEl.textContent = "Buscando novas lembranças...";
+            }, 500);
         }
     } catch (error) {
-        console.error("Erro ao buscar memórias:", error);
+        console.error("Erro memórias:", error);
     }
 }
 
