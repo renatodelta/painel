@@ -73,15 +73,16 @@ body {
 .tv-dashboard {
     display: grid;
     grid-template-columns: 1fr 1.8fr 1fr;
-    gap: 40px;
-    padding: 0 80px 60px 80px;
+    gap: 30px;
+    padding: 0 60px 40px 60px; /* Reduzi paddings externos */
     flex-grow: 1;
+    min-height: 0;
 }
 
 .col {
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 30px; /* Reduzi o gap para sobrar mais espaço */
 }
 
 /* Card General */
@@ -92,6 +93,25 @@ body {
     backdrop-filter: var(--glass-blur);
     overflow: hidden;
     box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+    animation: fadeInUp 0.8s ease backwards;
+}
+
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.2s; }
+.card:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.greeting-text {
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 5px;
+    background: linear-gradient(to right, #fff, var(--text-dim));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* Weather Card Premium */
@@ -286,8 +306,8 @@ body {
 .leg-item.pedro::before { background: var(--pedro); }
 
 .photos-card { 
-    flex: 1; /* Ocupa o resto do espaço de forma fixa */
-    min-height: 0; /* Importante para flexbox não expandir com conteúdo */
+    flex: 1.2; /* Um pouco mais de espaço para as fotos */
+    min-height: 0; 
     position: relative;
 }
 
@@ -324,8 +344,8 @@ body {
 /* Upcoming Card */
 .upcoming-card {
     padding: 30px;
-    height: 380px; /* Altura fixa rigorosa */
-    flex-shrink: 0; /* Não deixa encolher */
+    flex: 1; /* Distribui o espaço proporcionalmente */
+    min-height: 0;
 }
 
 .card-header-mini {
@@ -355,6 +375,32 @@ body {
 .c-time { font-size: 18px; font-weight: 600; min-width: 60px; color: var(--text-dim); }
 .c-info { font-size: 20px; }
 .c-tag { width: 10px; height: 40px; border-radius: 5px; }
+
+/* Status Card */
+.status-card {
+    padding: 30px;
+    flex: 0.8; /* Um pouco menor que as outras */
+    min-height: 0;
+}
+
+.status-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 18px;
+    color: var(--text-main);
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 15px;
+}
+
+.status-item i { color: var(--accent-primary); width: 24px; text-align: center; }
 
 /* Shopping List Card */
 .shopping-card {

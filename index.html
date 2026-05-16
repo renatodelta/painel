@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel da Família - Modern TV</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1.5.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600;800&display=swap" rel="stylesheet">
@@ -17,6 +17,7 @@
 
     <header class="main-header">
         <div class="header-left">
+            <h1 id="greeting" class="greeting-text">Bom dia, Família</h1>
             <div id="current-date" class="date-text">Domingo, 10 de Maio de 2025</div>
         </div>
         <div class="header-right">
@@ -141,10 +142,28 @@
                     <!-- Commitments injected by JS -->
                 </div>
             </section>
+
+            <section class="card status-card glass">
+                <div class="card-header-mini">Status da Casa</div>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <i class="fa-solid fa-trash"></i>
+                        <span>Lixo: Orgânico Amanhã</span>
+                    </div>
+                    <div class="status-item">
+                        <i class="fa-solid fa-dog"></i>
+                        <span>Pet: Alimentado</span>
+                    </div>
+                    <div class="status-item">
+                        <i class="fa-solid fa-faucet-horizontal"></i>
+                        <span>Rega: 18:00</span>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=1.5.0"></script>
 </body>
 
 </html>
