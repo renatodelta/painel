@@ -26,143 +26,108 @@
     </header>
 
     <main class="tv-dashboard">
-        <!-- Coluna Esquerda: Clima e Frase -->
+        <!-- Coluna Esquerda: Clima, Trânsito e Contagem -->
         <div class="col left-col">
             <section class="card weather-card glass">
-                <div class="weather-header">
-                    <div class="location">
-                        <i class="fa-solid fa-location-arrow"></i>
-                        <span class="city">São José dos Campos</span>
-                        <i class="fa-solid fa-chevron-down mini-icon"></i>
-                    </div>
-                    <i class="fa-solid fa-ellipsis mini-icon"></i>
-                </div>
-                
-                <div class="weather-main">
-                    <div class="temp-display">
-                        <span id="temp">16°</span>
-                        <div class="weather-icon-main">
-                            <i class="fa-solid fa-cloud"></i>
+                <div class="weather-main-display">
+                    <div class="current-weather">
+                        <span id="weather-temp">--°C</span>
+                        <div class="weather-range">
+                            <span id="weather-max" class="max">↑ --°</span>
+                            <span id="weather-min" class="min">↓ --°</span>
                         </div>
                     </div>
-                    <div class="weather-summary">
-                        <div class="rain-alert">
-                            <i class="fa-solid fa-umbrella"></i>
-                            <span>Espere 2 dias de chuva a partir de Hoje.</span>
-                        </div>
+                    <div class="weather-icon-box">
+                        <img id="weather-icon" src="" alt="Clima">
                     </div>
                 </div>
 
-                <div class="hourly-forecast">
-                    <div class="h-item">
-                        <span>23:00</span>
-                        <i class="fa-solid fa-cloud"></i>
-                        <span class="h-temp">16°</span>
-                        <span class="h-hum"><i class="fa-solid fa-droplet"></i> 13%</span>
-                    </div>
-                    <div class="h-item active">
-                        <span>00:00</span>
-                        <i class="fa-solid fa-cloud"></i>
-                        <span class="h-temp">16°</span>
-                        <span class="h-hum"><i class="fa-solid fa-droplet"></i> 15%</span>
-                    </div>
-                    <div class="h-item">
-                        <span>01:00</span>
-                        <i class="fa-solid fa-cloud"></i>
-                        <span class="h-temp">16°</span>
-                        <span class="h-hum"><i class="fa-solid fa-droplet"></i> 21%</span>
-                    </div>
-                    <div class="h-item">
-                        <span>02:00</span>
-                        <i class="fa-solid fa-cloud"></i>
-                        <span class="h-temp">15°</span>
-                        <span class="h-hum"><i class="fa-solid fa-droplet"></i> 23%</span>
+                <div class="hourly-forecast" id="hourly-forecast">
+                    <!-- Injetado via JS -->
+                </div>
+            </section>
+
+            <section class="card traffic-card glass">
+                <div class="card-header-mini">Trânsito Agora</div>
+                <div class="traffic-item">
+                    <i class="fa-solid fa-car"></i>
+                    <div class="traffic-info">
+                        <span class="dest">Instituto São José</span>
+                        <span id="traffic-time" class="time">-- min</span>
                     </div>
                 </div>
             </section>
 
-            <section class="card stoic-card glass">
-                <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
-                <p id="stoic-quote">"A felicidade de sua vida depende da qualidade de seus pensamentos."</p>
-                <span id="stoic-author">— Marco Aurélio</span>
-            </section>
-
-            <section class="card shopping-card glass">
-                <div class="card-header-mini">Lista da Semana</div>
-                <ul class="shopping-list" id="shopping-list">
-                    <!-- Items injected by JS -->
-                </ul>
-            </section>
-        </div>
-
-        <!-- Coluna Central: Calendário Grande -->
-        <div class="col center-col">
-            <section class="card calendar-full glass">
-                <div class="calendar-header">
-                    <button class="cal-btn"><i class="fa-solid fa-chevron-left"></i></button>
-                    <h2 id="calendar-month">Maio 2025</h2>
-                    <button class="cal-btn"><i class="fa-solid fa-chevron-right"></i></button>
-                </div>
-                <div class="calendar-grid">
-                    <div class="day-name">Dom</div>
-                    <div class="day-name">Seg</div>
-                    <div class="day-name">Ter</div>
-                    <div class="day-name">Qua</div>
-                    <div class="day-name">Qui</div>
-                    <div class="day-name">Sex</div>
-                    <div class="day-name">Sáb</div>
-
-                    <!-- Calendar days will be injected by JS -->
-                    <div id="calendar-days" class="days-container"></div>
-                </div>
-                <div class="family-legend">
-                    <span class="leg-item renato">Renato</span>
-                    <span class="leg-item elizabeth">Elizabeth</span>
-                    <span class="leg-item luiza">Luiza</span>
-                    <span class="leg-item camila">Camila</span>
-                    <span class="leg-item pedro">Pedro Henrique</span>
-                </div>
-            </section>
-        </div>
-
-        <!-- Coluna Direita: Google Photos e 48h -->
-        <div class="col right-col">
-            <section class="card photos-card glass">
-                <div class="photo-container">
-                    <img id="slideshow-img" src="assets/family.png" alt="Family Photo">
-                    <div class="photo-overlay">
-                        <i class="fa-brands fa-google-photos"></i>
-                    </div>
-                </div>
-            </section>
-
-            <section class="card upcoming-card glass">
-                <div class="card-header-mini">Próximas 48 Horas</div>
-                <div class="commitments-list" id="upcoming-list">
-                    <!-- Commitments injected by JS -->
+            <section class="card countdown-card glass">
+                <div class="card-header-mini">Contagem Regressiva</div>
+                <div class="countdown-content">
+                    <span id="countdown-days" class="days">--</span>
+                    <span class="label">Dias para o Niver do Pedro</span>
                 </div>
             </section>
 
             <section class="card status-card glass">
-                <div class="card-header-mini">Status da Casa</div>
+                <div class="card-header-mini">Casa</div>
                 <div class="status-grid">
-                    <div class="status-item">
-                        <i class="fa-solid fa-trash"></i>
-                        <span>Lixo: Orgânico Amanhã</span>
+                    <div class="status-item"><i class="fa-solid fa-trash"></i> <span>Lixo: Orgânico</span></div>
+                    <div class="status-item"><i class="fa-solid fa-dog"></i> <span>Pet: Ok</span></div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Coluna Central: Calendário Semanal e Cardápio -->
+        <div class="col center-col">
+            <section class="card calendar-weekly glass">
+                <div class="calendar-legend">
+                    <div class="legend-item renato"><span class="event-dot"></span> Renato</div>
+                    <div class="legend-item elizabeth"><span class="event-dot"></span> Elizabeth</div>
+                    <div class="legend-item luiza"><span class="event-dot"></span> Luiza</div>
+                    <div class="legend-item camila"><span class="event-dot"></span> Camila</div>
+                    <div class="legend-item pedro"><span class="event-dot"></span> Pedro</div>
+                </div>
+                <div class="weekly-grid" id="weekly-days">
+                    <!-- Injetado via JS -->
+                </div>
+            </section>
+
+            <section class="card menu-card glass">
+                <div class="card-header-mini">Cardápio do Dia</div>
+                <div class="menu-grid">
+                    <div class="menu-section">
+                        <span class="m-title">Café da Manhã</span>
+                        <span id="breakfast-items" class="m-content">--</span>
                     </div>
-                    <div class="status-item">
-                        <i class="fa-solid fa-dog"></i>
-                        <span>Pet: Alimentado</span>
+                    <div class="menu-section">
+                        <span class="m-title">Lancheira</span>
+                        <div id="lunchbox-items" class="m-items">
+                            <!-- Injetado via JS -->
+                        </div>
                     </div>
-                    <div class="status-item">
-                        <i class="fa-solid fa-faucet-horizontal"></i>
-                        <span>Rega: 18:00</span>
-                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Coluna Direita: Memória e Aniversários -->
+        <div class="col right-col">
+            <section class="card memory-card glass">
+                <div class="memory-container">
+                    <img id="memory-img" src="" alt="Memory">
+                    <div class="memory-caption">"Lembrança deste dia"</div>
+                    <div class="photo-overlay-mini"><i class="fa-brands fa-google-photos"></i></div>
+                </div>
+            </section>
+
+            <section class="card birthdays-card glass">
+                <div class="card-header-mini">Aniversários</div>
+                <div id="birthdays-list" class="birthdays-list-compact">
+                    <!-- Injetado via JS -->
                 </div>
             </section>
         </div>
     </main>
 
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgrEtdMlcFMvIGBXdI_jekrnVVGUNa7I8&loading=async" async></script>
     <script src="app.js?v=1.5.0"></script>
 </body>
 

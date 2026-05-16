@@ -1,6 +1,33 @@
 // CONFIGURAÇÃO
+const WEATHER_API = "https://api.open-meteo.com/v1/forecast?latitude=-23.1791&longitude=-45.8872&current_weather=true&hourly=temperature_2m,relativehumidity_2m,weathercode&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=2";
+
+const WMO_ICONS = {
+    0: 'fa-sun',
+    1: 'fa-cloud-sun', 2: 'fa-cloud-sun', 3: 'fa-cloud',
+    45: 'fa-smog', 48: 'fa-smog',
+    51: 'fa-cloud-rain', 53: 'fa-cloud-rain', 55: 'fa-cloud-rain',
+    61: 'fa-cloud-showers-heavy', 63: 'fa-cloud-showers-heavy', 65: 'fa-cloud-showers-heavy',
+    80: 'fa-cloud-rain', 81: 'fa-cloud-rain', 82: 'fa-cloud-rain',
+    95: 'fa-bolt'
+};
+
+function getWeatherIcon(code, isDay = 1) {
+    const suffix = isDay ? 'd' : 'n';
+    // Retorna a URL do ícone baseado no código WMO
+    if (code === 0) return `https://openweathermap.org/img/wn/01${suffix}@2x.png`; // Sol/Lua
+    if (code >= 1 && code <= 3) return `https://openweathermap.org/img/wn/02${suffix}@2x.png`; // Nuvens
+    if (code >= 45 && code <= 48) return `https://openweathermap.org/img/wn/50${suffix}@2x.png`; // Névoa
+    if (code >= 51 && code <= 67) return `https://openweathermap.org/img/wn/10${suffix}@2x.png`; // Chuva
+    if (code >= 80 && code <= 82) return `https://openweathermap.org/img/wn/09${suffix}@2x.png`; // Chuva forte
+    if (code >= 95) return `https://openweathermap.org/img/wn/11${suffix}@2x.png`; // Trovão
+    return `https://openweathermap.org/img/wn/03${suffix}@2x.png`; // Nublado padrão
+}
+
+const GOOGLE_MAPS_KEY = "AIzaSyBgrEtdMlcFMvIGBXdI_jekrnVVGUNa7I8";
+const CALENDAR_ID = "renatodelta@gmail.com";
 const GOOGLE_PHOTOS_ALBUM_URL = 'https://photos.app.goo.gl/VkN2FW93G73WFqhG7';
 
+let fetchedEvents = []; // Armazenará os eventos do Google Calendar
 const STOIC_QUOTES = [
     { text: "A felicidade de sua vida depende da qualidade de seus pensamentos.", author: "Marco Aurélio" },
     { text: "Não espere que os eventos aconteçam como você deseja; deseje que eles aconteçam como acontecem.", author: "Epiteto" },
@@ -10,27 +37,15 @@ const STOIC_QUOTES = [
     { text: "A vida é muito curta e ansiosa para aqueles que esquecem o passado, negligenciam o presente e temem o futuro.", author: "Sêneca" }
 ];
 
-const FAMILY_EVENTS = [
-    { day: 10, member: 'renato', desc: 'Ciclismo' },
-    { day: 10, member: 'pedro', desc: 'Futebol' },
-    { day: 12, member: 'elizabeth', desc: 'Reunião' },
-    { day: 15, member: 'luiza', desc: 'Balé' },
-    { day: 10, member: 'camila', desc: 'Dentista' }
-];
+// Removido FAMILY_EVENTS e UPCOMING_48H manuais pois agora vêm do Google Calendar
 
-const UPCOMING_48H = [
-    { time: '14:00', member: 'pedro', desc: 'Treino de Futebol' },
-    { time: '18:30', member: 'camila', desc: 'Aula de Inglês' },
-    { day: 'Amanhã', time: '09:00', member: 'renato', desc: 'Reunião Diretoria' },
-    { day: 'Amanhã', time: '16:00', member: 'elizabeth', desc: 'Médico' }
-];
 
-const SHOPPING_LIST = [
-    "Leite Integral", "Ovos Caipira", "Pão de Forma", "Banana Nanica",
-    "Maçã Gala", "Café em Pó", "Açúcar Refinado", "Arroz Branco",
-    "Feijão Preto", "Detergente", "Papel Higiênico", "Sabonete",
-    "Manteiga", "Iogurte Natural", "Queijo Prata", "Peito de Peru",
-    "Tomate Cereja", "Alface Fresca", "Cebola", "Alho"
+const BIRTHDAYS = [
+    { name: "Renato", date: "15/05", member: "renato" },
+    { name: "Elizabeth", date: "20/06", member: "elizabeth" },
+    { name: "Luiza", date: "10/08", member: "luiza" },
+    { name: "Camila", date: "05/10", member: "camila" },
+    { name: "Pedro", date: "12/12", member: "pedro" }
 ];
 
 let photoUrls = [
@@ -41,7 +56,18 @@ let photoUrls = [
     "https://lh3.googleusercontent.com/pw/AP1GczPzcTWqWakjAmPSJMtf4WX-GnGGVOKKRV3FdWbAiYAlb4hExleSCNRGfTR0u25oyYs_UMG8RHbDyhpEnzX5tmu567t0-hvrtHHAzFebsav0LlPxdFEY",
     "https://lh3.googleusercontent.com/pw/AP1GczPzN8m2t3sJKRgvTde62WQjKRw70AbjweuLxC-753R9wTNeThgc8NSem_cCTGnSanSmel95sXNrsZzWCd1ZVjew-nJYSabuYW_YIKWaHYskyxNhp_1-"
 ];
-let currentPhotoIdx = 0;
+
+const MENU_SEMANA = {
+    0: { cafe: "Panquecas e Suco", lanche: { suco: "Laranja", fruta: "Banana", carb: "Biscoito" } }, // Dom
+    1: { cafe: "Pão de Queijo e Chá", lanche: { suco: "Uva", fruta: "Maçã", carb: "Sanduíche" } }, // Seg
+    2: { cafe: "Iogurte com Granola", lanche: { suco: "Melancia", fruta: "Uva", carb: "Bolo" } }, // Ter
+    3: { cafe: "Ovos Mexidos", lanche: { suco: "Abacaxi", fruta: "Manga", carb: "Torrada" } }, // Qua
+    4: { cafe: "Tapioca com Queijo", lanche: { suco: "Goiaba", fruta: "Pera", carb: "Muffin" } }, // Qui
+    5: { cafe: "Cuscuz Recheado", lanche: { suco: "Maracujá", fruta: "Melão", carb: "Pão de Mel" } }, // Sex
+    6: { cafe: "Waffles com Frutas", lanche: { suco: "Morango", fruta: "Kiwi", carb: "Cookie" } }  // Sáb
+};
+
+const PEDRO_BDAY = "2026-06-26";
 
 // Relógio e Data
 function updateClock() {
@@ -64,206 +90,344 @@ function updateClock() {
         else if (hour >= 12 && hour < 18) greeting = "Boa tarde, Família";
         greetingEl.textContent = greeting;
     }
-
-    // Alerta Específico (23:24)
-    if (now.getHours() === 23 && now.getMinutes() === 26) {
-        playAlertSound();
-    }
 }
 
-function playAlertSound() {
+// Aniversariantes do Dia
+function renderBirthdays() {
+    const list = document.getElementById('birthdays-list');
+    if (!list) return;
+
+    const now = new Date();
+    const todayStr = now.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+    const todayBirthdays = BIRTHDAYS.filter(b => b.date === todayStr);
+
+    if (todayBirthdays.length === 0) {
+        list.innerHTML = '<div class="no-birthdays">Sem aniversários hoje 🎂</div>';
+        return;
+    }
+
+    list.innerHTML = todayBirthdays.map(b => `
+        <div class="birthday-item">
+            <div class="b-avatar ${b.member}">${b.name[0]}</div>
+            <div class="b-info">
+                <span class="b-name">${b.name}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Mapeamento de Membros por Palavra-Chave
+const MEMBER_KEYWORDS = {
+    'renato': ['Ciclismo', 'Trabalho', 'Reunião'],
+    'pedro': ['Futebol', 'Treino', 'Escola'],
+    'camila': ['Inglês', 'Dentista'],
+    'luiza': ['Balé', 'Dança'],
+    'elizabeth': ['Médico', 'Consulta', 'Reunião']
+};
+
+function getMemberFromText(summary, description) {
+    const text = (summary + ' ' + (description || '')).toLowerCase();
+    
+    // 1. Checar por nomes diretos (prioridade)
+    if (text.includes('renato')) return 'renato';
+    if (text.includes('pedro')) return 'pedro';
+    if (text.includes('camila')) return 'camila';
+    if (text.includes('luiza')) return 'luiza';
+    if (text.includes('elizabeth') || text.includes('bete')) return 'elizabeth';
+
+    // 2. Checar por palavras-chave
+    for (const [member, keywords] of Object.entries(MEMBER_KEYWORDS)) {
+        if (keywords.some(k => text.includes(k.toLowerCase()))) return member;
+    }
+    return 'generic'; 
+}
+
+// Buscar Eventos do Google Calendar
+async function fetchCalendarEvents() {
+    const container = document.getElementById('weekly-days');
     try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
+        const now = new Date();
+        const weekLater = new Date();
+        weekLater.setDate(now.getDate() + 7);
 
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+        const timeMin = now.toISOString();
+        const timeMax = weekLater.toISOString();
+        
+        const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?key=${GOOGLE_MAPS_KEY}&timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime`;
+        
+        const response = await fetch(url);
+        
+        if (response.status === 403) {
+            if (container) container.innerHTML = '<div class="no-events">Erro 403: Verifique se a agenda está Pública e se a API está ativa.</div>';
+            return;
+        }
 
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // Tom mais agudo para alerta
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        const data = await response.json();
 
-        oscillator.start();
-        oscillator.stop(audioCtx.currentTime + 0.5);
-    } catch (e) {
-        console.log("Áudio bloqueado pelo navegador. Interaja com a página primeiro.");
+        if (data.items) {
+            fetchedEvents = data.items.map(item => ({
+                summary: item.summary,
+                description: item.description || '',
+                start: item.start.dateTime || item.start.date,
+                member: getMemberFromText(item.summary, item.description)
+            }));
+            renderWeeklyCalendar();
+        }
+    } catch (error) {
+        console.error("Erro ao carregar Google Calendar:", error);
     }
 }
 
-// Calendário Mensal
-function renderCalendar() {
-    const container = document.getElementById('calendar-days');
+// Calendário Semanal
+function renderWeeklyCalendar() {
+    const container = document.getElementById('weekly-days');
     if (!container) return;
 
     container.innerHTML = '';
     const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    for (let i = 0; i < firstDay; i++) {
-        container.innerHTML += '<div class="day-cell empty"></div>';
+    
+    const weekDays = [];
+    for (let i = 0; i < 7; i++) {
+        const day = new Date(now);
+        day.setHours(0, 0, 0, 0); // Normalizar para início do dia
+        day.setDate(now.getDate() + i);
+        weekDays.push(day);
     }
 
-    for (let day = 1; day <= daysInMonth; day++) {
-        const isToday = day === now.getDate() ? 'today' : '';
-        const dayEvents = FAMILY_EVENTS.filter(e => e.day === day);
-
-        let dotsHtml = '<div class="dots-container">';
-        dayEvents.forEach(e => {
-            dotsHtml += `<div class="dot ${e.member}"></div>`;
+    weekDays.forEach((day, index) => {
+        const dayNum = day.getDate();
+        const dayName = day.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '');
+        const isToday = index === 0 ? 'today' : '';
+        
+        // Filtrar e agrupar eventos
+        const dayEvents = fetchedEvents.filter(e => {
+            const eDate = new Date(e.start);
+            return eDate.getDate() === dayNum && eDate.getMonth() === day.getMonth();
         });
-        dotsHtml += '</div>';
+
+        // Organizar eventos por membro
+        const grouped = {};
+        dayEvents.forEach(e => {
+            if (!grouped[e.member]) grouped[e.member] = [];
+            grouped[e.member].push(e);
+        });
+
+        let eventsHtml = '';
+        
+        // Ordem de exibição fixa por membro
+        const membersOrder = ['renato', 'elizabeth', 'luiza', 'camila', 'pedro', 'generic'];
+        
+        membersOrder.forEach(member => {
+            if (grouped[member]) {
+                eventsHtml += `<div class="member-group ${member}">`;
+                eventsHtml += `<div class="member-sub-header">${member === 'generic' ? 'Geral' : member}</div>`;
+                
+                grouped[member].forEach(e => {
+                    const eDate = new Date(e.start);
+                    const isAllDay = !e.start.includes('T');
+                    const timeStr = isAllDay ? '' : eDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                    
+                    eventsHtml += `
+                        <div class="week-event">
+                            <span class="event-dot"></span>
+                            ${timeStr ? `<span class="event-time">${timeStr}</span>` : ''}
+                            <span class="event-desc">${e.summary}</span>
+                        </div>
+                    `;
+                });
+                eventsHtml += `</div>`;
+            }
+        });
 
         container.innerHTML += `
-            <div class="day-cell ${isToday}">
-                <span class="day-num">${day}</span>
-                ${dotsHtml}
+            <div class="week-day ${isToday}">
+                <div class="day-header">
+                    <span class="day-num">${dayNum}</span>
+                    <span class="day-name">${dayName}</span>
+                </div>
+                <div class="day-events">
+                    ${eventsHtml || '<span class="no-events">-</span>'}
+                </div>
             </div>
+        `;
+    });
+}
+
+// Cardápio do Dia
+function renderMenu() {
+    const now = new Date();
+    const day = now.getDay();
+    const menu = MENU_SEMANA[day];
+
+    const breakfastEl = document.getElementById('breakfast-items');
+    const lunchboxEl = document.getElementById('lunchbox-items');
+
+    if (breakfastEl) breakfastEl.textContent = menu.cafe;
+    if (lunchboxEl) {
+        lunchboxEl.innerHTML = `
+            <div class="m-item"><i class="fa-solid fa-bottle-water"></i> <span>${menu.lanche.suco}</span></div>
+            <div class="m-item"><i class="fa-solid fa-apple-whole"></i> <span>${menu.lanche.fruta}</span></div>
+            <div class="m-item"><i class="fa-solid fa-bread-slice"></i> <span>${menu.lanche.carb}</span></div>
         `;
     }
 }
 
-// Próximas 48h
-function renderUpcoming() {
-    const list = document.getElementById('upcoming-list');
-    if (!list) return;
-    list.innerHTML = '';
+// Monitor de Trânsito Real (Google Maps SDK)
+function updateTraffic() {
+    const timeEl = document.getElementById('traffic-time');
+    if (!timeEl || !window.google) return;
 
-    UPCOMING_48H.forEach(item => {
-        list.innerHTML += `
-            <div class="c-item">
-                <div class="c-tag" style="background: var(--${item.member})"></div>
-                <div class="c-time">${item.day || item.time}</div>
-                <div class="c-info"><strong>${item.desc}</strong></div>
-            </div>
-        `;
+    const service = new google.maps.DistanceMatrixService();
+    const origem = "Condomínio Bell Park, São José dos Campos, SP";
+    const destino = "Instituto São José, São José dos Campos, SP";
+
+    service.getDistanceMatrix({
+        origins: [origem],
+        destinations: [destino],
+        travelMode: google.maps.TravelMode.DRIVING,
+        drivingOptions: {
+            departureTime: new Date(),
+            trafficModel: google.maps.TrafficModel.BEST_GUESS
+        },
+        unitSystem: google.maps.UnitSystem.METRIC
+    }, (response, status) => {
+        if (status === "OK") {
+            const element = response.rows[0].elements[0];
+            if (element.status === "OK") {
+                const durationText = element.duration_in_traffic ? element.duration_in_traffic.text : element.duration.text;
+                const durationValue = element.duration_in_traffic ? element.duration_in_traffic.value : element.duration.value;
+                
+                const minutes = Math.floor(durationValue / 60);
+                timeEl.textContent = durationText;
+                timeEl.style.color = minutes > 22 ? '#ff453a' : '#32d74b';
+            }
+        } else {
+            console.error("Erro no Google Maps SDK:", status);
+            // Fallback simulação
+            const randomTime = Math.floor(Math.random() * (25 - 18 + 1) + 18);
+            timeEl.textContent = `${randomTime} min`;
+        }
     });
 }
 
-// Lista de Compras
-function renderShoppingList() {
-    const list = document.getElementById('shopping-list');
-    if (!list) return;
-    list.innerHTML = '';
+// Contagem Regressiva
+function updateCountdown() {
+    const daysEl = document.getElementById('countdown-days');
+    if (!daysEl) return;
 
-    SHOPPING_LIST.forEach(item => {
-        list.innerHTML += `
-            <li class="s-item">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <span>${item}</span>
-            </li>
-        `;
-    });
+    const now = new Date();
+    const target = new Date(PEDRO_BDAY);
+    const diff = target - now;
+    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    
+    daysEl.textContent = days;
 }
 
-// Frase Estoica
-function updateQuote() {
-    const quoteEl = document.getElementById('stoic-quote');
-    const authorEl = document.getElementById('stoic-author');
-    const randomQuote = STOIC_QUOTES[Math.floor(Math.random() * STOIC_QUOTES.length)];
+// Memórias Reais - Google Photos API via PHP
+async function updateMemory() {
+    const imgEl = document.getElementById('memory-img');
+    const captionEl = document.querySelector('.memory-caption');
+    if (!imgEl) return;
 
-    if (quoteEl) quoteEl.textContent = `"${randomQuote.text}"`;
-    if (authorEl) authorEl.textContent = `— ${randomQuote.author}`;
+    try {
+        const response = await fetch('get_memories.php');
+        const memories = await response.json();
+
+        if (memories && memories.length > 0) {
+            const randomIdx = Math.floor(Math.random() * memories.length);
+            const memory = memories[randomIdx];
+
+            imgEl.style.opacity = 0;
+            
+            setTimeout(() => {
+                imgEl.src = memory.url + "=w1200";
+                if (captionEl) captionEl.textContent = memory.caption;
+                imgEl.style.opacity = 1;
+            }, 1000);
+        } else {
+            if (captionEl) captionEl.textContent = "Buscando novas lembranças...";
+        }
+    } catch (error) {
+        console.error("Erro ao buscar memórias:", error);
+    }
 }
 
-// Clima Automático (Open-Meteo)
-const WEATHER_API = "https://api.open-meteo.com/v1/forecast?latitude=-23.1791&longitude=-45.8872&current_weather=true&hourly=temperature_2m,relativehumidity_2m,weathercode";
-
-const WMO_ICONS = {
-    0: 'fa-sun',
-    1: 'fa-cloud-sun', 2: 'fa-cloud-sun', 3: 'fa-cloud',
-    45: 'fa-smog', 48: 'fa-smog',
-    51: 'fa-cloud-rain', 53: 'fa-cloud-rain', 55: 'fa-cloud-rain',
-    61: 'fa-cloud-showers-heavy', 63: 'fa-cloud-showers-heavy', 65: 'fa-cloud-showers-heavy',
-    80: 'fa-cloud-rain', 81: 'fa-cloud-rain', 82: 'fa-cloud-rain',
-    95: 'fa-bolt'
-};
-
+// Clima Compacto com Previsão de 4h
 async function updateWeather() {
     try {
         const response = await fetch(WEATHER_API);
         const data = await response.json();
 
-        // Atualizar Temperatura Atual
-        const tempEl = document.getElementById('temp');
-        const iconMainEl = document.querySelector('.weather-icon-main i');
-        if (tempEl) tempEl.textContent = `${Math.round(data.current_weather.temperature)}°`;
-        if (iconMainEl) {
-            const code = data.current_weather.weathercode;
-            iconMainEl.className = `fa-solid ${WMO_ICONS[code] || 'fa-cloud'}`;
-        }
+        // Atual
+        const currentTemp = Math.round(data.current_weather.temperature);
+        const isDay = data.current_weather.is_day; // Pega se é dia ou noite
+        const weatherTempEl = document.getElementById('weather-temp');
+        const weatherIconEl = document.getElementById('weather-icon');
+        
+        if (weatherTempEl) weatherTempEl.textContent = `${currentTemp}°C`;
+        if (weatherIconEl) weatherIconEl.src = getWeatherIcon(data.current_weather.weathercode, isDay);
 
-        // Atualizar Hourly Forecast (próximas 4 horas)
-        const hourlyContainer = document.querySelector('.hourly-forecast');
-        if (hourlyContainer) {
-            const nowHour = new Date().getHours();
-            let hourlyHtml = '';
-
-            for (let i = 0; i < 4; i++) {
-                const hourIdx = nowHour + i;
-                const time = `${String(hourIdx % 24).padStart(2, '0')}:00`;
+        // Max/Min
+        const maxEl = document.getElementById('weather-max');
+        const minEl = document.getElementById('weather-min');
+        if (maxEl && data.daily) maxEl.textContent = `↑ ${Math.round(data.daily.temperature_2m_max[0])}°`;
+        if (minEl && data.daily) minEl.textContent = `↓ ${Math.round(data.daily.temperature_2m_min[0])}°`;
+        
+        // Previsão Próximas 4 horas
+        const hourlyContainer = document.getElementById('hourly-forecast');
+        if (hourlyContainer && data.hourly) {
+            hourlyContainer.innerHTML = '';
+            const now = new Date();
+            const currentHour = now.getHours();
+            
+            for (let i = 1; i <= 4; i++) {
+                const hourIdx = currentHour + i;
+                const targetHour = hourIdx % 24;
+                const isTargetDay = (targetHour >= 6 && targetHour < 18) ? 1 : 0; // Regra: dia entre 6h e 18h
                 const temp = Math.round(data.hourly.temperature_2m[hourIdx]);
-                const hum = data.hourly.relativehumidity_2m[hourIdx];
-                const code = data.hourly.weathercode[hourIdx];
-                const active = i === 0 ? 'active' : '';
-
-                hourlyHtml += `
-                    <div class="h-item ${active}">
-                        <span>${time}</span>
-                        <i class="fa-solid ${WMO_ICONS[code] || 'fa-cloud'}"></i>
-                        <span class="h-temp">${temp}°</span>
-                        <span class="h-hum"><i class="fa-solid fa-droplet"></i> ${hum}%</span>
+                const icon = getWeatherIcon(data.hourly.weathercode[hourIdx], isTargetDay);
+                
+                hourlyContainer.innerHTML += `
+                    <div class="hourly-item">
+                        <span class="h-hour">${targetHour}h</span>
+                        <img class="h-icon" src="${icon}" alt="Clima">
+                        <span class="h-temp">${temp ? temp + '°' : '--°'}</span>
                     </div>
                 `;
             }
-            hourlyContainer.innerHTML = hourlyHtml;
         }
-
-        // Alerta de Chuva Simplificado
-        const rainAlertEl = document.querySelector('.rain-alert span');
-        const next24hWeather = data.hourly.weathercode.slice(nowHour, nowHour + 24);
-        const willRain = next24hWeather.some(code => code >= 51);
-        if (rainAlertEl) {
-            rainAlertEl.textContent = willRain ? "Previsão de chuva nas próximas 24h." : "Tempo estável nas próximas 24h.";
-        }
-
     } catch (error) {
-        console.error("Erro ao carregar clima:", error);
+        console.error("Erro clima:", error);
     }
-}
-
-function startSlideshow() {
-    const imgEl = document.getElementById('slideshow-img');
-    if (!imgEl) return;
-
-    setInterval(() => {
-        currentPhotoIdx = (currentPhotoIdx + 1) % photoUrls.length;
-        imgEl.style.opacity = 0;
-        setTimeout(() => {
-            const baseUrl = photoUrls[currentPhotoIdx];
-            imgEl.src = baseUrl.includes('lh3') ? baseUrl + "=w1200" : baseUrl;
-            imgEl.style.opacity = 1;
-        }, 1500);
-    }, 15000);
 }
 
 // Inicialização
 function init() {
-    updateClock();
-    renderCalendar();
-    renderUpcoming();
-    updateQuote();
-    renderShoppingList();
-    updateWeather();
-    startSlideshow();
+    const tasks = [
+        updateClock,
+        fetchCalendarEvents, // Busca do Google Calendar
+        renderBirthdays,
+        renderMenu,
+        updateTraffic,
+        updateCountdown,
+        updateMemory,
+        updateWeather
+    ];
+
+    tasks.forEach(task => {
+        try {
+            task();
+        } catch (e) {
+            console.error(`Erro ao executar ${task.name}:`, e);
+        }
+    });
 
     setInterval(updateClock, 60000);
-    setInterval(updateQuote, 3600000);
-    setInterval(updateWeather, 1800000); // Atualiza a cada 30 min
+    setInterval(updateWeather, 600000); // 10 min
+    setInterval(updateTraffic, 60000); // 1 min
+    setInterval(fetchCalendarEvents, 3600000); // 1h
+    setInterval(renderMenu, 3600000);
+    setInterval(updateMemory, 15000); // Rotacionar memória a cada 15s
 }
 
 init();
