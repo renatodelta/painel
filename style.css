@@ -398,7 +398,6 @@ body {
     position: relative;
     overflow: hidden;
     min-height: 400px;
-    background: rgba(255,255,255,0.05); /* Fundo para teste */
 }
 
 .memory-container {
@@ -411,7 +410,7 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 1; /* Forçar visível para teste */
+    opacity: 0;
     transition: opacity 1.5s ease-in-out;
 }
 

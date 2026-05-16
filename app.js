@@ -339,7 +339,6 @@ async function updateMemory() {
 
             // Se for link do Google (tem baseUrl), adiciona o tamanho. Se for Unsplash, usa direto.
             const finalUrl = memory.url.includes('googleusercontent') ? memory.url + "=w1200" : memory.url;
-            console.log("Tentando carregar foto:", finalUrl);
 
             imgEl.style.opacity = 0;
             
