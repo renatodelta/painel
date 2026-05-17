@@ -58,47 +58,47 @@ let photoUrls = [
 ];
 
 const MENU_SEMANA = {
-    0: { 
-        cafe: ["Panquecas", "Suco Laranja", "Frutas", ""], 
-        almoco: ["Macarronada", "Frango", "Salada", ""], 
-        lanche: ["Bolo", "Café", "Biscoito", ""], 
-        jantar: ["Sopa", "Torradas", "", ""] 
+    0: {
+        cafe: ["Panquecas", "Suco Laranja", "Frutas", ""],
+        almoco: ["Arroz", "Feijão", "Ovo Frito", "Salada"],
+        lanche: ["Bolo", "Café", "Biscoito", ""],
+        jantar: ["Sopa", "Torradas", "", ""]
     },
-    1: { 
-        cafe: ["Pão na Chapa", "Leite", "Mamão", ""], 
-        almoco: ["Arroz", "Feijão", "Bife", "Batata"], 
-        lanche: ["Sanduíche", "Suco", "Maçã", ""], 
-        jantar: ["Omelete", "Salada", "Arroz", ""] 
+    1: {
+        cafe: ["Pão na Chapa", "Leite", "Mamão", ""],
+        almoco: ["Arroz", "Feijão", "Bife", "Batata"],
+        lanche: ["Sanduíche", "Suco", "Maçã", ""],
+        jantar: ["Omelete", "Salada", "Arroz", ""]
     },
-    2: { 
-        cafe: ["Iogurte", "Granola", "Banana", ""], 
-        almoco: ["Strogonoff", "Arroz", "Batata Palha", ""], 
-        lanche: ["Biscoito", "Água Coco", "Uva", ""], 
-        jantar: ["Torta Frango", "Salada", "", ""] 
+    2: {
+        cafe: ["Iogurte", "Granola", "Banana", ""],
+        almoco: ["Strogonoff", "Arroz", "Batata Palha", ""],
+        lanche: ["Biscoito", "Água Coco", "Uva", ""],
+        jantar: ["Torta Frango", "Salada", "", ""]
     },
-    3: { 
-        cafe: ["Ovos Mexidos", "Torrada", "Suco", ""], 
-        almoco: ["Peixe", "Purê", "Brócolis", ""], 
-        lanche: ["Muffin", "Iogurte", "Pera", ""], 
-        jantar: ["Wrap Frango", "Salada", "", ""] 
+    3: {
+        cafe: ["Ovos Mexidos", "Torrada", "Suco", ""],
+        almoco: ["Peixe", "Purê", "Brócolis", ""],
+        lanche: ["Muffin", "Iogurte", "Pera", ""],
+        jantar: ["Wrap Frango", "Salada", "", ""]
     },
-    4: { 
-        cafe: ["Tapioca", "Café com Leite", "Melão", ""], 
-        almoco: ["Carne Panela", "Mandioca", "Arroz", "Feijão"], 
-        lanche: ["Bolo de Fubá", "Chá", "Goiaba", ""], 
-        jantar: ["Pizza Caseira", "Suco", "", ""] 
+    4: {
+        cafe: ["Tapioca", "Café com Leite", "Melão", ""],
+        almoco: ["Carne Panela", "Mandioca", "Arroz", "Feijão"],
+        lanche: ["Bolo de Fubá", "Chá", "Goiaba", ""],
+        jantar: ["Pizza Caseira", "Suco", "", ""]
     },
-    5: { 
-        cafe: ["Cuscuz", "Ovo Frito", "Suco", ""], 
-        almoco: ["Feijoada", "Couve", "Farofa", "Laranja"], 
-        lanche: ["Pão de Mel", "Suco", "Melão", ""], 
-        jantar: ["Lanche Natural", "Suco", "", ""] 
+    5: {
+        cafe: ["Cuscuz", "Ovo Frito", "Suco", ""],
+        almoco: ["Feijoada", "Couve", "Farofa", "Laranja"],
+        lanche: ["Pão de Mel", "Suco", "Melão", ""],
+        jantar: ["Lanche Natural", "Suco", "", ""]
     },
-    6: { 
-        cafe: ["Waffles", "Geleia", "Morangos", ""], 
-        almoco: ["Churrasco", "Pão de Alho", "Farofa", ""], 
-        lanche: ["Sorvete", "Cookie", "", ""], 
-        jantar: ["Hambúrguer", "Batata Frita", "", ""] 
+    6: {
+        cafe: ["Waffles", "Geleia", "Morangos", ""],
+        almoco: ["Churrasco", "Pão de Alho", "Farofa", ""],
+        lanche: ["Sorvete", "Cookie", "", ""],
+        jantar: ["Hambúrguer", "Batata Frita", "", ""]
     }
 };
 
@@ -303,9 +303,9 @@ function renderMenu() {
     const now = new Date();
     const day = now.getDay();
     const menu = MENU_SEMANA[day];
-    
+
     const sections = ['cafe', 'almoco', 'lanche', 'jantar'];
-    
+
     sections.forEach(sec => {
         const el = document.getElementById(`menu-${sec}`);
         if (el) {
@@ -327,7 +327,7 @@ function renderStatus() {
     const now = new Date();
     const day = now.getDay();
     const trashEl = document.getElementById('trash-status');
-    
+
     if (trashEl) {
         trashEl.textContent = `Lixo: ${TRASH_SCHEDULE[day]}`;
     }
@@ -341,7 +341,7 @@ async function updateMarket() {
     try {
         const response = await fetch('get_shopping_list.php');
         const items = await response.json();
-        
+
         if (items && items.length > 0) {
             marketEl.textContent = `Comprar: ${items.join(', ')}`;
         } else {
