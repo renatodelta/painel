@@ -158,8 +158,8 @@ body {
 
 .hourly-forecast {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
     padding-top: 15px;
     border-top: 1px solid rgba(255,255,255,0.1);
 }

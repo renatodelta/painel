@@ -2,6 +2,18 @@
 header('Content-Type: application/json');
 require_once 'config.php';
 
+$CACHE_FILE = 'memories_cache.json';
+$CACHE_DURATION = 1800; // 30 minutos (as URLs base do Google expiram após 60 min)
+
+// Verifica se existe cache válido
+if (file_exists($CACHE_FILE) && (time() - filemtime($CACHE_FILE) < $CACHE_DURATION)) {
+    $cache_data = json_decode(file_get_contents($CACHE_FILE), true);
+    if (!empty($cache_data)) {
+        echo json_encode($cache_data);
+        exit;
+    }
+}
+
 if (!file_exists(TOKEN_FILE)) {
     echo json_encode(['error' => 'Não autenticado. Acesse google_auth.php primeiro.']);
     exit;
@@ -25,7 +37,13 @@ $token_data = json_decode($res, true);
 $access_token = isset($token_data['access_token']) ? $token_data['access_token'] : null;
 
 if (!$access_token) {
-    die(json_encode([['url' => '', 'caption' => 'Erro: Falha ao renovar token do Google. Reautorize em google_auth.php.']]));
+    // Se falhar, tenta retornar o cache velho (mesmo expirado) para não quebrar a tela
+    if (file_exists($CACHE_FILE)) {
+        echo file_get_contents($CACHE_FILE);
+    } else {
+        echo json_encode([['url' => '', 'caption' => 'Erro: Falha ao renovar token do Google. Reautorize em google_auth.php.']]);
+    }
+    exit;
 }
 
 // 2. Buscar fotos de anos anteriores (Hoje, mas em anos passados)
@@ -125,8 +143,13 @@ if (empty($foundMedia)) {
 
 // Se AINDA estiver vazio, manda um erro informativo
 if (empty($foundMedia)) {
-    echo json_encode([['url' => 'https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&q=80&w=1200', 'caption' => 'Conectado! Adicione fotos à biblioteca do Google Photos para exibi-las aqui.']] );
+    $result = [['url' => 'https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&q=80&w=1200', 'caption' => 'Conectado! Adicione fotos à biblioteca do Google Photos para exibi-las aqui.']];
 } else {
-    echo json_encode($foundMedia);
+    $result = $foundMedia;
 }
+
+// Salva no cache antes de devolver
+file_put_contents($CACHE_FILE, json_encode($result));
+
+echo json_encode($result);
 ?>

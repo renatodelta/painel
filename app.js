@@ -374,14 +374,14 @@ async function updateWeather() {
         if (maxEl && data.daily) maxEl.textContent = `↑ ${Math.round(data.daily.temperature_2m_max[0])}°`;
         if (minEl && data.daily) minEl.textContent = `↓ ${Math.round(data.daily.temperature_2m_min[0])}°`;
         
-        // Previsão Próximas 4 horas
+        // Previsão Próximas 6 horas
         const hourlyContainer = document.getElementById('hourly-forecast');
         if (hourlyContainer && data.hourly) {
             hourlyContainer.innerHTML = '';
             const now = new Date();
             const currentHour = now.getHours();
             
-            for (let i = 1; i <= 4; i++) {
+            for (let i = 1; i <= 6; i++) {
                 const hourIdx = currentHour + i;
                 const targetHour = hourIdx % 24;
                 const isTargetDay = (targetHour >= 6 && targetHour < 18) ? 1 : 0; // Regra: dia entre 6h e 18h
@@ -426,7 +426,7 @@ function init() {
     setInterval(updateClock, 60000);
     setInterval(updateWeather, 600000); // 10 min
     setInterval(updateTraffic, 60000); // 1 min
-    setInterval(fetchCalendarEvents, 3600000); // 1h
+    setInterval(fetchCalendarEvents, 1800000); // 30 min
     setInterval(renderMenu, 3600000);
     setInterval(updateMemory, 15000); // Rotacionar memória a cada 15s
 }
