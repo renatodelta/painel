@@ -79,7 +79,7 @@ body {
 /* Dashboard Grid - Fixed 100vh */
 .tv-dashboard {
     display: grid;
-    grid-template-columns: 1fr 1.8fr 1fr;
+    grid-template-columns: 1fr 2.8fr;
     gap: 15px; /* Reduzido de 30px */
     padding: 0 40px 20px 40px; 
     flex-grow: 1;
@@ -336,9 +336,42 @@ body {
 
 .week-event .event-time { font-size: 9px; opacity: 0.7; font-weight: 400; margin-right: 2px; }
 
-/* Menu Card - Slimmer */
+/* Menu Card - 4 Columns */
 .menu-card { padding: 15px 20px; flex: 1; }
-.m-content { font-size: 16px; }
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+.menu-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.m-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent-primary);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 5px;
+    text-align: center;
+}
+.m-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.m-item {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px 8px;
+    border-radius: 6px;
+    line-height: 1.2;
+    text-align: center;
+}
 
 /* Photos & Memory Unified */
 .memory-card { 
@@ -397,7 +430,18 @@ body {
     flex-grow: 1;
     position: relative;
     overflow: hidden;
-    min-height: 400px;
+    min-height: 200px;
+}
+
+/* Bottom Cards (Menu & Birthdays) */
+.bottom-cards {
+    display: flex;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.bottom-cards > .card {
+    flex: 1;
 }
 
 .memory-container {

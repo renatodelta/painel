@@ -17,7 +17,7 @@
 
     <header class="main-header">
         <div class="header-left">
-            <h1 id="greeting" class="greeting-text">Bom dia, Família</h1>
+            <h1 id="greeting" class="greeting-text">Bom dia, família</h1>
             <div id="current-date" class="date-text">Domingo, 10 de Maio de 2025</div>
         </div>
         <div class="header-right">
@@ -66,17 +66,17 @@
                 </div>
             </section>
 
-            <section class="card status-card glass">
-                <div class="card-header-mini">Casa</div>
-                <div class="status-grid">
-                    <div class="status-item"><i class="fa-solid fa-trash"></i> <span>Lixo: Orgânico</span></div>
-                    <div class="status-item"><i class="fa-solid fa-dog"></i> <span>Pet: Ok</span></div>
+            <section class="card memory-card glass">
+                <div class="memory-container">
+                    <img id="memory-img" src="" alt="Memory">
+                    <div class="memory-caption">"Lembrança deste dia"</div>
+                    <div class="photo-overlay-mini"><i class="fa-brands fa-google-photos"></i></div>
                 </div>
             </section>
         </div>
 
-        <!-- Coluna Central: Calendário Semanal e Cardápio -->
-        <div class="col center-col">
+        <!-- Coluna Principal: Calendário Semanal, Cardápio e Aniversários -->
+        <div class="col main-col">
             <section class="card calendar-weekly glass">
                 <div class="calendar-legend">
                     <div class="legend-item renato"><span class="event-dot"></span> Renato</div>
@@ -90,44 +90,50 @@
                 </div>
             </section>
 
-            <section class="card menu-card glass">
-                <div class="card-header-mini">Cardápio do Dia</div>
-                <div class="menu-grid">
-                    <div class="menu-section">
-                        <span class="m-title">Café da Manhã</span>
-                        <span id="breakfast-items" class="m-content">--</span>
-                    </div>
-                    <div class="menu-section">
-                        <span class="m-title">Lancheira</span>
-                        <div id="lunchbox-items" class="m-items">
-                            <!-- Injetado via JS -->
+            <div class="bottom-cards">
+                <section class="card menu-card glass">
+                    <div class="card-header-mini">Cardápio do Dia</div>
+                    <div class="menu-grid">
+                        <div class="menu-section">
+                            <span class="m-title">Café da manhã</span>
+                            <div id="menu-cafe" class="m-items"></div>
+                        </div>
+                        <div class="menu-section">
+                            <span class="m-title">Almoço</span>
+                            <div id="menu-almoco" class="m-items"></div>
+                        </div>
+                        <div class="menu-section">
+                            <span class="m-title">Lanche</span>
+                            <div id="menu-lanche" class="m-items"></div>
+                        </div>
+                        <div class="menu-section">
+                            <span class="m-title">Jantar</span>
+                            <div id="menu-jantar" class="m-items"></div>
                         </div>
                     </div>
-                </div>
-            </section>
-        </div>
+                </section>
 
-        <!-- Coluna Direita: Memória e Aniversários -->
-        <div class="col right-col">
-            <section class="card memory-card glass">
-                <div class="memory-container">
-                    <img id="memory-img" src="" alt="Memory">
-                    <div class="memory-caption">"Lembrança deste dia"</div>
-                    <div class="photo-overlay-mini"><i class="fa-brands fa-google-photos"></i></div>
-                </div>
-            </section>
+                <section class="card status-card glass">
+                    <div class="card-header-mini">Casa</div>
+                    <div class="status-grid">
+                        <div class="status-item"><i class="fa-solid fa-trash"></i> <span id="trash-status">Lixo: --</span></div>
+                        <div class="status-item"><i class="fa-solid fa-cart-shopping"></i> <span id="market-status">Comprar: --</span></div>
+                    </div>
+                </section>
 
-            <section class="card birthdays-card glass">
-                <div class="card-header-mini">Aniversários</div>
-                <div id="birthdays-list" class="birthdays-list-compact">
-                    <!-- Injetado via JS -->
-                </div>
-            </section>
+                <section class="card birthdays-card glass">
+                    <div class="card-header-mini">Aniversários</div>
+                    <div id="birthdays-list" class="birthdays-list-compact">
+                        <!-- Injetado via JS -->
+                    </div>
+                </section>
+            </div>
         </div>
     </main>
 
     <!-- Google Maps API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgrEtdMlcFMvIGBXdI_jekrnVVGUNa7I8&loading=async" async></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgrEtdMlcFMvIGBXdI_jekrnVVGUNa7I8&loading=async"
+        async></script>
     <script src="app.js?v=1.5.0"></script>
 </body>
 

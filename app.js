@@ -58,13 +58,58 @@ let photoUrls = [
 ];
 
 const MENU_SEMANA = {
-    0: { cafe: "Panquecas e Suco", lanche: { suco: "Laranja", fruta: "Banana", carb: "Biscoito" } }, // Dom
-    1: { cafe: "Pão de Queijo e Chá", lanche: { suco: "Uva", fruta: "Maçã", carb: "Sanduíche" } }, // Seg
-    2: { cafe: "Iogurte com Granola", lanche: { suco: "Melancia", fruta: "Uva", carb: "Bolo" } }, // Ter
-    3: { cafe: "Ovos Mexidos", lanche: { suco: "Abacaxi", fruta: "Manga", carb: "Torrada" } }, // Qua
-    4: { cafe: "Tapioca com Queijo", lanche: { suco: "Goiaba", fruta: "Pera", carb: "Muffin" } }, // Qui
-    5: { cafe: "Cuscuz Recheado", lanche: { suco: "Maracujá", fruta: "Melão", carb: "Pão de Mel" } }, // Sex
-    6: { cafe: "Waffles com Frutas", lanche: { suco: "Morango", fruta: "Kiwi", carb: "Cookie" } }  // Sáb
+    0: { 
+        cafe: ["Panquecas", "Suco Laranja", "Frutas", ""], 
+        almoco: ["Macarronada", "Frango", "Salada", ""], 
+        lanche: ["Bolo", "Café", "Biscoito", ""], 
+        jantar: ["Sopa", "Torradas", "", ""] 
+    },
+    1: { 
+        cafe: ["Pão na Chapa", "Leite", "Mamão", ""], 
+        almoco: ["Arroz", "Feijão", "Bife", "Batata"], 
+        lanche: ["Sanduíche", "Suco", "Maçã", ""], 
+        jantar: ["Omelete", "Salada", "Arroz", ""] 
+    },
+    2: { 
+        cafe: ["Iogurte", "Granola", "Banana", ""], 
+        almoco: ["Strogonoff", "Arroz", "Batata Palha", ""], 
+        lanche: ["Biscoito", "Água Coco", "Uva", ""], 
+        jantar: ["Torta Frango", "Salada", "", ""] 
+    },
+    3: { 
+        cafe: ["Ovos Mexidos", "Torrada", "Suco", ""], 
+        almoco: ["Peixe", "Purê", "Brócolis", ""], 
+        lanche: ["Muffin", "Iogurte", "Pera", ""], 
+        jantar: ["Wrap Frango", "Salada", "", ""] 
+    },
+    4: { 
+        cafe: ["Tapioca", "Café com Leite", "Melão", ""], 
+        almoco: ["Carne Panela", "Mandioca", "Arroz", "Feijão"], 
+        lanche: ["Bolo de Fubá", "Chá", "Goiaba", ""], 
+        jantar: ["Pizza Caseira", "Suco", "", ""] 
+    },
+    5: { 
+        cafe: ["Cuscuz", "Ovo Frito", "Suco", ""], 
+        almoco: ["Feijoada", "Couve", "Farofa", "Laranja"], 
+        lanche: ["Pão de Mel", "Suco", "Melão", ""], 
+        jantar: ["Lanche Natural", "Suco", "", ""] 
+    },
+    6: { 
+        cafe: ["Waffles", "Geleia", "Morangos", ""], 
+        almoco: ["Churrasco", "Pão de Alho", "Farofa", ""], 
+        lanche: ["Sorvete", "Cookie", "", ""], 
+        jantar: ["Hambúrguer", "Batata Frita", "", ""] 
+    }
+};
+
+const TRASH_SCHEDULE = {
+    0: "Não há coleta",
+    1: "Orgânico",
+    2: "Reciclável",
+    3: "Orgânico",
+    4: "Reciclável",
+    5: "Orgânico",
+    6: "Reciclável"
 };
 
 const PEDRO_BDAY = "2026-06-26";
@@ -127,7 +172,7 @@ const MEMBER_KEYWORDS = {
 
 function getMemberFromText(summary, description) {
     const text = (summary + ' ' + (description || '')).toLowerCase();
-    
+
     // 1. Checar por nomes diretos (prioridade)
     if (text.includes('renato')) return 'renato';
     if (text.includes('pedro')) return 'pedro';
@@ -139,7 +184,7 @@ function getMemberFromText(summary, description) {
     for (const [member, keywords] of Object.entries(MEMBER_KEYWORDS)) {
         if (keywords.some(k => text.includes(k.toLowerCase()))) return member;
     }
-    return 'generic'; 
+    return 'generic';
 }
 
 // Buscar Eventos do Google Calendar
@@ -152,11 +197,11 @@ async function fetchCalendarEvents() {
 
         const timeMin = now.toISOString();
         const timeMax = weekLater.toISOString();
-        
+
         const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?key=${GOOGLE_MAPS_KEY}&timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime`;
-        
+
         const response = await fetch(url);
-        
+
         if (response.status === 403) {
             if (container) container.innerHTML = '<div class="no-events">Erro 403: Verifique se a agenda está Pública e se a API está ativa.</div>';
             return;
@@ -185,7 +230,7 @@ function renderWeeklyCalendar() {
 
     container.innerHTML = '';
     const now = new Date();
-    
+
     const weekDays = [];
     for (let i = 0; i < 7; i++) {
         const day = new Date(now);
@@ -198,7 +243,7 @@ function renderWeeklyCalendar() {
         const dayNum = day.getDate();
         const dayName = day.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '');
         const isToday = index === 0 ? 'today' : '';
-        
+
         // Filtrar e agrupar eventos
         const dayEvents = fetchedEvents.filter(e => {
             const eDate = new Date(e.start);
@@ -213,20 +258,20 @@ function renderWeeklyCalendar() {
         });
 
         let eventsHtml = '';
-        
+
         // Ordem de exibição fixa por membro
         const membersOrder = ['renato', 'elizabeth', 'luiza', 'camila', 'pedro', 'generic'];
-        
+
         membersOrder.forEach(member => {
             if (grouped[member]) {
                 eventsHtml += `<div class="member-group ${member}">`;
                 eventsHtml += `<div class="member-sub-header">${member === 'generic' ? 'Geral' : member}</div>`;
-                
+
                 grouped[member].forEach(e => {
                     const eDate = new Date(e.start);
                     const isAllDay = !e.start.includes('T');
                     const timeStr = isAllDay ? '' : eDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                    
+
                     eventsHtml += `
                         <div class="week-event">
                             <span class="event-dot"></span>
@@ -253,22 +298,57 @@ function renderWeeklyCalendar() {
     });
 }
 
-// Cardápio do Dia
+// Renderizar Cardápio Diário
 function renderMenu() {
     const now = new Date();
     const day = now.getDay();
     const menu = MENU_SEMANA[day];
+    
+    const sections = ['cafe', 'almoco', 'lanche', 'jantar'];
+    
+    sections.forEach(sec => {
+        const el = document.getElementById(`menu-${sec}`);
+        if (el) {
+            let html = '';
+            if (menu[sec]) {
+                menu[sec].forEach(item => {
+                    if (item && item.trim() !== '') {
+                        html += `<div class="m-item">${item}</div>`;
+                    }
+                });
+            }
+            el.innerHTML = html;
+        }
+    });
+}
 
-    const breakfastEl = document.getElementById('breakfast-items');
-    const lunchboxEl = document.getElementById('lunchbox-items');
+// Status da Casa (Lixo, etc)
+function renderStatus() {
+    const now = new Date();
+    const day = now.getDay();
+    const trashEl = document.getElementById('trash-status');
+    
+    if (trashEl) {
+        trashEl.textContent = `Lixo: ${TRASH_SCHEDULE[day]}`;
+    }
+}
 
-    if (breakfastEl) breakfastEl.textContent = menu.cafe;
-    if (lunchboxEl) {
-        lunchboxEl.innerHTML = `
-            <div class="m-item"><i class="fa-solid fa-bottle-water"></i> <span>${menu.lanche.suco}</span></div>
-            <div class="m-item"><i class="fa-solid fa-apple-whole"></i> <span>${menu.lanche.fruta}</span></div>
-            <div class="m-item"><i class="fa-solid fa-bread-slice"></i> <span>${menu.lanche.carb}</span></div>
-        `;
+// Mercado via Google Sheets
+async function updateMarket() {
+    const marketEl = document.getElementById('market-status');
+    if (!marketEl) return;
+
+    try {
+        const response = await fetch('get_shopping_list.php');
+        const items = await response.json();
+        
+        if (items && items.length > 0) {
+            marketEl.textContent = `Comprar: ${items.join(', ')}`;
+        } else {
+            marketEl.textContent = `Comprar: Tudo em dia!`;
+        }
+    } catch (error) {
+        console.error("Erro mercado:", error);
     }
 }
 
@@ -296,7 +376,7 @@ function updateTraffic() {
             if (element.status === "OK") {
                 const durationText = element.duration_in_traffic ? element.duration_in_traffic.text : element.duration.text;
                 const durationValue = element.duration_in_traffic ? element.duration_in_traffic.value : element.duration.value;
-                
+
                 const minutes = Math.floor(durationValue / 60);
                 timeEl.textContent = durationText;
                 timeEl.style.color = minutes > 22 ? '#ff453a' : '#32d74b';
@@ -319,7 +399,7 @@ function updateCountdown() {
     const target = new Date(PEDRO_BDAY);
     const diff = target - now;
     const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-    
+
     daysEl.textContent = days;
 }
 
@@ -341,7 +421,7 @@ async function updateMemory() {
             const finalUrl = memory.url.includes('googleusercontent') ? memory.url + "=w1200" : memory.url;
 
             imgEl.style.opacity = 0;
-            
+
             setTimeout(() => {
                 imgEl.src = finalUrl;
                 if (captionEl) captionEl.textContent = memory.caption;
@@ -364,7 +444,7 @@ async function updateWeather() {
         const isDay = data.current_weather.is_day; // Pega se é dia ou noite
         const weatherTempEl = document.getElementById('weather-temp');
         const weatherIconEl = document.getElementById('weather-icon');
-        
+
         if (weatherTempEl) weatherTempEl.textContent = `${currentTemp}°C`;
         if (weatherIconEl) weatherIconEl.src = getWeatherIcon(data.current_weather.weathercode, isDay);
 
@@ -373,21 +453,21 @@ async function updateWeather() {
         const minEl = document.getElementById('weather-min');
         if (maxEl && data.daily) maxEl.textContent = `↑ ${Math.round(data.daily.temperature_2m_max[0])}°`;
         if (minEl && data.daily) minEl.textContent = `↓ ${Math.round(data.daily.temperature_2m_min[0])}°`;
-        
+
         // Previsão Próximas 6 horas
         const hourlyContainer = document.getElementById('hourly-forecast');
         if (hourlyContainer && data.hourly) {
             hourlyContainer.innerHTML = '';
             const now = new Date();
             const currentHour = now.getHours();
-            
+
             for (let i = 1; i <= 6; i++) {
                 const hourIdx = currentHour + i;
                 const targetHour = hourIdx % 24;
                 const isTargetDay = (targetHour >= 6 && targetHour < 18) ? 1 : 0; // Regra: dia entre 6h e 18h
                 const temp = Math.round(data.hourly.temperature_2m[hourIdx]);
                 const icon = getWeatherIcon(data.hourly.weathercode[hourIdx], isTargetDay);
-                
+
                 hourlyContainer.innerHTML += `
                     <div class="hourly-item">
                         <span class="h-hour">${targetHour}h</span>
@@ -409,6 +489,8 @@ function init() {
         fetchCalendarEvents, // Busca do Google Calendar
         renderBirthdays,
         renderMenu,
+        renderStatus,
+        updateMarket,
         updateTraffic,
         updateCountdown,
         updateMemory,
@@ -428,6 +510,8 @@ function init() {
     setInterval(updateTraffic, 60000); // 1 min
     setInterval(fetchCalendarEvents, 1800000); // 30 min
     setInterval(renderMenu, 3600000);
+    setInterval(renderStatus, 3600000); // 1h
+    setInterval(updateMarket, 900000); // 15 min
     setInterval(updateMemory, 15000); // Rotacionar memória a cada 15s
 }
 
