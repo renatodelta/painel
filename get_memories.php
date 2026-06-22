@@ -14,6 +14,47 @@ if (file_exists($CACHE_FILE) && (time() - filemtime($CACHE_FILE) < $CACHE_DURATI
     }
 }
 
+$foundMedia = [];
+
+// PLANO A: Tenta obter fotos do Álbum Compartilhado via Scraping da URL Pública
+if (defined('GOOGLE_PHOTOS_ALBUM_URL') && !empty(GOOGLE_PHOTOS_ALBUM_URL)) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, GOOGLE_PHOTOS_ALBUM_URL);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+    $html = curl_exec($ch);
+    curl_close($ch);
+
+    if ($html) {
+        preg_match_all('/https:\/\/lh3\.googleusercontent\.com\/pw\/[a-zA-Z0-9-_]+/i', $html, $matches);
+        if (!empty($matches[0])) {
+            $unique_bases = [];
+            foreach ($matches[0] as $u) {
+                $parts = explode('=', $u);
+                $base = $parts[0];
+                if (strlen($base) > 50) {
+                    $unique_bases[$base] = true;
+                }
+            }
+            foreach (array_keys($unique_bases) as $base_url) {
+                $foundMedia[] = [
+                    'url' => $base_url,
+                    'caption' => 'Lembrança do Álbum'
+                ];
+            }
+        }
+    }
+}
+
+// Se encontrou fotos no álbum público, salva no cache e retorna
+if (!empty($foundMedia)) {
+    file_put_contents($CACHE_FILE, json_encode($foundMedia));
+    echo json_encode($foundMedia);
+    exit;
+}
+
 if (!file_exists(TOKEN_FILE)) {
     echo json_encode(['error' => 'Não autenticado. Acesse google_auth.php primeiro.']);
     exit;

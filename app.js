@@ -25,7 +25,7 @@ function getWeatherIcon(code, isDay = 1) {
 
 const GOOGLE_MAPS_KEY = "AIzaSyBgrEtdMlcFMvIGBXdI_jekrnVVGUNa7I8";
 const CALENDAR_ID = "renatodelta@gmail.com";
-const GOOGLE_PHOTOS_ALBUM_URL = 'https://photos.app.goo.gl/VkN2FW93G73WFqhG7';
+const GOOGLE_PHOTOS_ALBUM_URL = 'https://photos.app.goo.gl/eFTriGzhsxFdu7mL8';
 
 let fetchedEvents = []; // Armazenará os eventos do Google Calendar
 const STOIC_QUOTES = [
