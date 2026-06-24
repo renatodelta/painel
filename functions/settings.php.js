@@ -1,8 +1,8 @@
 export async function onRequest(context) {
-  const db = context.env.DB;
+  const db = context.env.DB || context.env.D1;
   if (!db) {
     return new Response(JSON.stringify({ 
-      error: "O binding do banco de dados D1 com o nome 'DB' não foi configurado no painel da Cloudflare." 
+      error: "O binding do banco de dados D1 com o nome 'DB' ou 'D1' não foi configurado no painel da Cloudflare." 
     }), {
       status: 500,
       headers: { "content-type": "application/json;charset=UTF-8" }
