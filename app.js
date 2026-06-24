@@ -413,6 +413,14 @@ async function updateMemory() {
         const response = await fetch('get_memories.php');
         const memories = await response.json();
 
+        // Tratamento de erro retornado pela API
+        if (memories && memories.error) {
+            console.error("Erro do servidor de memórias:", memories.error);
+            if (captionEl) captionEl.textContent = "Erro: " + memories.error;
+            imgEl.src = "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&q=80&w=1200";
+            return;
+        }
+
         if (memories && memories.length > 0) {
             const randomIdx = Math.floor(Math.random() * memories.length);
             const memory = memories[randomIdx];
