@@ -40,7 +40,7 @@ const STOIC_QUOTES = [
 // Removido FAMILY_EVENTS e UPCOMING_48H manuais pois agora vêm do Google Calendar
 
 
-const BIRTHDAYS = (() => {
+let BIRTHDAYS = (() => {
     const saved = localStorage.getItem("birthdays");
     return saved ? JSON.parse(saved) : [
         { name: "Renato", date: "15/05", member: "renato" },
@@ -60,7 +60,7 @@ let photoUrls = [
     "https://lh3.googleusercontent.com/pw/AP1GczPzN8m2t3sJKRgvTde62WQjKRw70AbjweuLxC-753R9wTNeThgc8NSem_cCTGnSanSmel95sXNrsZzWCd1ZVjew-nJYSabuYW_YIKWaHYskyxNhp_1-"
 ];
 
-const MENU_SEMANA = (() => {
+let MENU_SEMANA = (() => {
     const saved = localStorage.getItem("menuSemana");
     return saved ? JSON.parse(saved) : {
         0: {
@@ -496,8 +496,29 @@ async function updateWeather() {
     }
 }
 
+// Carregar configurações do D1 Database
+async function loadDbSettings() {
+    try {
+        const response = await fetch('settings.php');
+        if (response.ok) {
+            const settings = await response.json();
+            if (settings && !settings.error) {
+                if (settings.birthdays) BIRTHDAYS = settings.birthdays;
+                if (settings.menuSemana) MENU_SEMANA = settings.menuSemana;
+                if (settings.photoTransitionTime) window.photoTransitionTime = parseInt(settings.photoTransitionTime);
+                console.log("Configurações carregadas do D1 com sucesso!");
+                return;
+            }
+        }
+    } catch (e) {
+        console.warn("D1 inacessível, utilizando dados locais (localStorage/fallback):", e);
+    }
+}
+
 // Inicialização
-function init() {
+async function init() {
+    await loadDbSettings();
+
     const tasks = [
         updateClock,
         fetchCalendarEvents, // Busca do Google Calendar
@@ -528,8 +549,8 @@ function init() {
     setInterval(updateMarket, 900000); // 15 min
     
     // Tempo de transição dinâmico de memórias
-    const savedTransition = localStorage.getItem("photoTransitionTime");
-    const transitionMs = (savedTransition ? parseInt(savedTransition) : 15) * 1000;
+    const savedTransition = window.photoTransitionTime || (localStorage.getItem("photoTransitionTime") ? parseInt(localStorage.getItem("photoTransitionTime")) : 15);
+    const transitionMs = savedTransition * 1000;
     setInterval(updateMemory, transitionMs);
 }
 

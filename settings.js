@@ -33,8 +33,8 @@ let currentMenu = {};
 let currentTransitionTime = 15;
 
 // Inicialização
-document.addEventListener("DOMContentLoaded", () => {
-  loadData();
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadData();
   initPhotosTab();
   initMenuTab();
   renderBirthdaysList();
@@ -51,17 +51,31 @@ function switchTab(tabId) {
   document.getElementById(tabId).classList.add('active');
 }
 
-// Carregar dados salvos ou padrões
-function loadData() {
-  // 1. Transição das fotos
+// Carregar dados salvos ou padrões do D1 (com fallback no localStorage)
+async function loadData() {
+  try {
+    const response = await fetch('settings.php');
+    if (response.ok) {
+      const settings = await response.json();
+      if (settings && !settings.error) {
+        currentTransitionTime = settings.photoTransitionTime ? parseInt(settings.photoTransitionTime) : 15;
+        currentBirthdays = settings.birthdays || DEFAULT_BIRTHDAYS;
+        currentMenu = settings.menuSemana || DEFAULT_MENU;
+        console.log("Dados carregados com sucesso do D1!");
+        return;
+      }
+    }
+  } catch (err) {
+    console.warn("Erro ao buscar dados do D1, caindo no localStorage:", err);
+  }
+
+  // Fallback: ler do localStorage ou padrões
   const savedTransition = localStorage.getItem("photoTransitionTime");
   currentTransitionTime = savedTransition ? parseInt(savedTransition) : 15;
 
-  // 2. Aniversários
   const savedBirthdays = localStorage.getItem("birthdays");
   currentBirthdays = savedBirthdays ? JSON.parse(savedBirthdays) : DEFAULT_BIRTHDAYS;
 
-  // 3. Cardápio Semanal
   const savedMenu = localStorage.getItem("menuSemana");
   currentMenu = savedMenu ? JSON.parse(savedMenu) : DEFAULT_MENU;
 }
@@ -231,15 +245,9 @@ function deleteBirthday(index) {
   renderBirthdaysList();
 }
 
-// Salvar todas as configurações no localStorage
-function saveAllSettings() {
-  // 1. Salvar tempo de transição das fotos
-  localStorage.setItem("photoTransitionTime", currentTransitionTime.toString());
-
-  // 2. Salvar aniversários
-  localStorage.setItem("birthdays", JSON.stringify(currentBirthdays));
-
-  // 3. Salvar cardápio
+// Salvar todas as configurações no D1 (e localStorage de backup)
+async function saveAllSettings() {
+  // 1. Coletar cardápio
   const newMenu = {};
   document.querySelectorAll(".meal-input").forEach(input => {
     const day = parseInt(input.getAttribute("data-day"));
@@ -259,6 +267,34 @@ function saveAllSettings() {
     newMenu[day][meal] = items.slice(0, 4); // garante no máximo 4 pratos
   });
 
+  const payload = {
+    photoTransitionTime: currentTransitionTime,
+    birthdays: currentBirthdays,
+    menuSemana: newMenu
+  };
+
+  // 2. Tentar salvar no D1 Database
+  try {
+    const response = await fetch('settings.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    const resData = await response.json();
+    if (resData.error) {
+      throw new Error(resData.error);
+    }
+    console.log("Configurações salvas no D1 com sucesso!");
+  } catch (err) {
+    console.warn("Falha ao salvar no D1, mantendo apenas localmente:", err);
+    alert("Aviso: Não foi possível salvar no banco de dados Cloudflare (D1). Suas configurações foram salvas localmente neste navegador como fallback. Erro: " + err.message);
+  }
+
+  // 3. Backup local (para compatibilidade/fallback)
+  localStorage.setItem("photoTransitionTime", currentTransitionTime.toString());
+  localStorage.setItem("birthdays", JSON.stringify(currentBirthdays));
   localStorage.setItem("menuSemana", JSON.stringify(newMenu));
 
   // Exibir Toast de confirmação
