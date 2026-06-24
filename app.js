@@ -40,13 +40,16 @@ const STOIC_QUOTES = [
 // Removido FAMILY_EVENTS e UPCOMING_48H manuais pois agora vêm do Google Calendar
 
 
-const BIRTHDAYS = [
-    { name: "Renato", date: "15/05", member: "renato" },
-    { name: "Elizabeth", date: "20/06", member: "elizabeth" },
-    { name: "Luiza", date: "10/08", member: "luiza" },
-    { name: "Camila", date: "05/10", member: "camila" },
-    { name: "Pedro", date: "12/12", member: "pedro" }
-];
+const BIRTHDAYS = (() => {
+    const saved = localStorage.getItem("birthdays");
+    return saved ? JSON.parse(saved) : [
+        { name: "Renato", date: "15/05", member: "renato" },
+        { name: "Elizabeth", date: "20/06", member: "elizabeth" },
+        { name: "Luiza", date: "10/08", member: "luiza" },
+        { name: "Camila", date: "05/10", member: "camila" },
+        { name: "Pedro", date: "12/12", member: "pedro" }
+    ];
+})();
 
 let photoUrls = [
     "https://lh3.googleusercontent.com/pw/AP1GczPxsvyUBIuEonS1jjQexvjQL9xdYlCfIdRfBJQrpPMZZy_RLe3zBx5VZlG_1UuKSlIC75EbAOZBK0sohXjzHjYju3MsC9vzCcgnMLN44qVAHirpQm0w",
@@ -57,50 +60,53 @@ let photoUrls = [
     "https://lh3.googleusercontent.com/pw/AP1GczPzN8m2t3sJKRgvTde62WQjKRw70AbjweuLxC-753R9wTNeThgc8NSem_cCTGnSanSmel95sXNrsZzWCd1ZVjew-nJYSabuYW_YIKWaHYskyxNhp_1-"
 ];
 
-const MENU_SEMANA = {
-    0: {
-        cafe: ["Panquecas", "Suco Laranja", "Frutas", ""],
-        almoco: ["Arroz", "Feijão", "Ovo Frito", "Salada"],
-        lanche: ["Bolo", "Café", "Biscoito", ""],
-        jantar: ["Sopa", "Torradas", "", ""]
-    },
-    1: {
-        cafe: ["Pão na Chapa", "Leite", "Mamão", ""],
-        almoco: ["Arroz", "Feijão", "Bife", "Batata"],
-        lanche: ["Sanduíche", "Suco", "Maçã", ""],
-        jantar: ["Omelete", "Salada", "Arroz", ""]
-    },
-    2: {
-        cafe: ["Iogurte", "Granola", "Banana", ""],
-        almoco: ["Strogonoff", "Arroz", "Batata Palha", ""],
-        lanche: ["Biscoito", "Água Coco", "Uva", ""],
-        jantar: ["Torta Frango", "Salada", "", ""]
-    },
-    3: {
-        cafe: ["Ovos Mexidos", "Torrada", "Suco", ""],
-        almoco: ["Peixe", "Purê", "Brócolis", ""],
-        lanche: ["Muffin", "Iogurte", "Pera", ""],
-        jantar: ["Wrap Frango", "Salada", "", ""]
-    },
-    4: {
-        cafe: ["Tapioca", "Café com Leite", "Melão", ""],
-        almoco: ["Carne Panela", "Mandioca", "Arroz", "Feijão"],
-        lanche: ["Bolo de Fubá", "Chá", "Goiaba", ""],
-        jantar: ["Pizza Caseira", "Suco", "", ""]
-    },
-    5: {
-        cafe: ["Cuscuz", "Ovo Frito", "Suco", ""],
-        almoco: ["Feijoada", "Couve", "Farofa", "Laranja"],
-        lanche: ["Pão de Mel", "Suco", "Melão", ""],
-        jantar: ["Lanche Natural", "Suco", "", ""]
-    },
-    6: {
-        cafe: ["Waffles", "Geleia", "Morangos", ""],
-        almoco: ["Churrasco", "Pão de Alho", "Farofa", ""],
-        lanche: ["Sorvete", "Cookie", "", ""],
-        jantar: ["Hambúrguer", "Batata Frita", "", ""]
-    }
-};
+const MENU_SEMANA = (() => {
+    const saved = localStorage.getItem("menuSemana");
+    return saved ? JSON.parse(saved) : {
+        0: {
+            cafe: ["Panquecas", "Suco Laranja", "Frutas", ""],
+            almoco: ["Arroz", "Feijão", "Ovo Frito", "Salada"],
+            lanche: ["Bolo", "Café", "Biscoito", ""],
+            jantar: ["Sopa", "Torradas", "", ""]
+        },
+        1: {
+            cafe: ["Pão na Chapa", "Leite", "Mamão", ""],
+            almoco: ["Arroz", "Feijão", "Bife", "Batata"],
+            lanche: ["Sanduíche", "Suco", "Maçã", ""],
+            jantar: ["Omelete", "Salada", "Arroz", ""]
+        },
+        2: {
+            cafe: ["Iogurte", "Granola", "Banana", ""],
+            almoco: ["Strogonoff", "Arroz", "Batata Palha", ""],
+            lanche: ["Biscoito", "Água Coco", "Uva", ""],
+            jantar: ["Torta Frango", "Salada", "", ""]
+        },
+        3: {
+            cafe: ["Ovos Mexidos", "Torrada", "Suco", ""],
+            almoco: ["Peixe", "Purê", "Brócolis", ""],
+            lanche: ["Muffin", "Iogurte", "Pera", ""],
+            jantar: ["Wrap Frango", "Salada", "", ""]
+        },
+        4: {
+            cafe: ["Tapioca", "Café com Leite", "Melão", ""],
+            almoco: ["Carne Panela", "Mandioca", "Arroz", "Feijão"],
+            lanche: ["Bolo de Fubá", "Chá", "Goiaba", ""],
+            jantar: ["Pizza Caseira", "Suco", "", ""]
+        },
+        5: {
+            cafe: ["Cuscuz", "Ovo Frito", "Suco", ""],
+            almoco: ["Feijoada", "Couve", "Farofa", "Laranja"],
+            lanche: ["Pão de Mel", "Suco", "Melão", ""],
+            jantar: ["Lanche Natural", "Suco", "", ""]
+        },
+        6: {
+            cafe: ["Waffles", "Geleia", "Morangos", ""],
+            almoco: ["Churrasco", "Pão de Alho", "Farofa", ""],
+            lanche: ["Sorvete", "Cookie", "", ""],
+            jantar: ["Hambúrguer", "Batata Frita", "", ""]
+        }
+    };
+})();
 
 const TRASH_SCHEDULE = {
     0: "Não há coleta",
@@ -520,7 +526,11 @@ function init() {
     setInterval(renderMenu, 3600000);
     setInterval(renderStatus, 3600000); // 1h
     setInterval(updateMarket, 900000); // 15 min
-    setInterval(updateMemory, 15000); // Rotacionar memória a cada 15s
+    
+    // Tempo de transição dinâmico de memórias
+    const savedTransition = localStorage.getItem("photoTransitionTime");
+    const transitionMs = (savedTransition ? parseInt(savedTransition) : 15) * 1000;
+    setInterval(updateMemory, transitionMs);
 }
 
 init();
