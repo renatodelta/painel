@@ -66,17 +66,28 @@ function loadData() {
   currentMenu = savedMenu ? JSON.parse(savedMenu) : DEFAULT_MENU;
 }
 
+// Formatar tempo em segundos para exibição legível
+function formatTimeLabel(seconds) {
+  if (seconds >= 60) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return remainingSeconds > 0 ? `${minutes}min ${remainingSeconds}s` : `${minutes}min`;
+  }
+  return `${seconds}s`;
+}
+
 // Inicializar aba de Fotos
 function initPhotosTab() {
   const slider = document.getElementById("photo-transition");
   const label = document.getElementById("photo-transition-label");
   
   slider.value = currentTransitionTime;
-  label.textContent = `${currentTransitionTime}s`;
+  label.textContent = formatTimeLabel(currentTransitionTime);
   
   slider.addEventListener("input", (e) => {
-    label.textContent = `${e.target.value}s`;
-    currentTransitionTime = parseInt(e.target.value);
+    const val = parseInt(e.target.value);
+    label.textContent = formatTimeLabel(val);
+    currentTransitionTime = val;
   });
 }
 
