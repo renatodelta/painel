@@ -1,5 +1,29 @@
-// CONFIGURAÇÃO
-const WEATHER_API = "https://api.open-meteo.com/v1/forecast?latitude=-23.1791&longitude=-45.8872&current_weather=true&hourly=temperature_2m,relativehumidity_2m,weathercode&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=2";
+// CONFIGURAÇÃO BASE
+let WEATHER_LOCATION = (() => {
+    const saved = localStorage.getItem("weatherLocation");
+    return saved ? JSON.parse(saved) : {
+        city: "São José dos Campos",
+        lat: -23.1791,
+        lon: -45.8872
+    };
+})();
+
+let COUNTDOWN_CONFIG = (() => {
+    const saved = localStorage.getItem("countdown");
+    return saved ? JSON.parse(saved) : {
+        targetDate: "2026-06-26",
+        label: "aniversário Pedro Henrique"
+    };
+})();
+
+let BACKGROUND_MUSIC = (() => {
+    const saved = localStorage.getItem("backgroundMusic");
+    return saved ? JSON.parse(saved) : {
+        enabled: false,
+        url: "",
+        volume: 25
+    };
+})();
 
 const WMO_ICONS = {
     0: 'fa-sun',
@@ -13,32 +37,20 @@ const WMO_ICONS = {
 
 function getWeatherIcon(code, isDay = 1) {
     const suffix = isDay ? 'd' : 'n';
-    // Retorna a URL do ícone baseado no código WMO
-    if (code === 0) return `https://openweathermap.org/img/wn/01${suffix}@2x.png`; // Sol/Lua
-    if (code >= 1 && code <= 3) return `https://openweathermap.org/img/wn/02${suffix}@2x.png`; // Nuvens
-    if (code >= 45 && code <= 48) return `https://openweathermap.org/img/wn/50${suffix}@2x.png`; // Névoa
-    if (code >= 51 && code <= 67) return `https://openweathermap.org/img/wn/10${suffix}@2x.png`; // Chuva
-    if (code >= 80 && code <= 82) return `https://openweathermap.org/img/wn/09${suffix}@2x.png`; // Chuva forte
-    if (code >= 95) return `https://openweathermap.org/img/wn/11${suffix}@2x.png`; // Trovão
-    return `https://openweathermap.org/img/wn/03${suffix}@2x.png`; // Nublado padrão
+    if (code === 0) return `https://openweathermap.org/img/wn/01${suffix}@2x.png`;
+    if (code >= 1 && code <= 3) return `https://openweathermap.org/img/wn/02${suffix}@2x.png`;
+    if (code >= 45 && code <= 48) return `https://openweathermap.org/img/wn/50${suffix}@2x.png`;
+    if (code >= 51 && code <= 67) return `https://openweathermap.org/img/wn/10${suffix}@2x.png`;
+    if (code >= 80 && code <= 82) return `https://openweathermap.org/img/wn/09${suffix}@2x.png`;
+    if (code >= 95) return `https://openweathermap.org/img/wn/11${suffix}@2x.png`;
+    return `https://openweathermap.org/img/wn/03${suffix}@2x.png`;
 }
 
 const GOOGLE_MAPS_KEY = "AIzaSyBgrEtdMlcFMvIGBXdI_jekrnVVGUNa7I8";
 const CALENDAR_ID = "renatodelta@gmail.com";
 const GOOGLE_PHOTOS_ALBUM_URL = 'https://photos.app.goo.gl/eFTriGzhsxFdu7mL8';
 
-let fetchedEvents = []; // Armazenará os eventos do Google Calendar
-const STOIC_QUOTES = [
-    { text: "A felicidade de sua vida depende da qualidade de seus pensamentos.", author: "Marco Aurélio" },
-    { text: "Não espere que os eventos aconteçam como você deseja; deseje que eles aconteçam como acontecem.", author: "Epiteto" },
-    { text: "A sorte é o que acontece quando a preparação encontra a oportunidade.", author: "Sêneca" },
-    { text: "É nas dificuldades que o homem se conhece.", author: "Epiteto" },
-    { text: "Quem é rico? Aquele que está satisfeito com o que tem.", author: "Epiteto" },
-    { text: "A vida é muito curta e ansiosa para aqueles que esquecem o passado, negligenciam o presente e temem o futuro.", author: "Sêneca" }
-];
-
-// Removido FAMILY_EVENTS e UPCOMING_48H manuais pois agora vêm do Google Calendar
-
+let fetchedEvents = [];
 
 let BIRTHDAYS = (() => {
     const saved = localStorage.getItem("birthdays");
@@ -118,8 +130,6 @@ const TRASH_SCHEDULE = {
     6: "Reciclável"
 };
 
-const PEDRO_BDAY = "2026-06-26";
-
 // Relógio e Data
 function updateClock() {
     const now = new Date();
@@ -179,14 +189,12 @@ const MEMBER_KEYWORDS = {
 function getMemberFromText(summary, description) {
     const text = (summary + ' ' + (description || '')).toLowerCase();
 
-    // 1. Checar por nomes diretos (prioridade)
     if (text.includes('renato')) return 'renato';
     if (text.includes('pedro')) return 'pedro';
     if (text.includes('camila')) return 'camila';
     if (text.includes('luiza')) return 'luiza';
     if (text.includes('elizabeth') || text.includes('bete')) return 'elizabeth';
 
-    // 2. Checar por palavras-chave
     for (const [member, keywords] of Object.entries(MEMBER_KEYWORDS)) {
         if (keywords.some(k => text.includes(k.toLowerCase()))) return member;
     }
@@ -240,7 +248,7 @@ function renderWeeklyCalendar() {
     const weekDays = [];
     for (let i = 0; i < 7; i++) {
         const day = new Date(now);
-        day.setHours(0, 0, 0, 0); // Normalizar para início do dia
+        day.setHours(0, 0, 0, 0);
         day.setDate(now.getDate() + i);
         weekDays.push(day);
     }
@@ -250,13 +258,11 @@ function renderWeeklyCalendar() {
         const dayName = day.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '');
         const isToday = index === 0 ? 'today' : '';
 
-        // Filtrar e agrupar eventos
         const dayEvents = fetchedEvents.filter(e => {
             const eDate = new Date(e.start);
             return eDate.getDate() === dayNum && eDate.getMonth() === day.getMonth();
         });
 
-        // Organizar eventos por membro
         const grouped = {};
         dayEvents.forEach(e => {
             if (!grouped[e.member]) grouped[e.member] = [];
@@ -264,8 +270,6 @@ function renderWeeklyCalendar() {
         });
 
         let eventsHtml = '';
-
-        // Ordem de exibição fixa por membro
         const membersOrder = ['renato', 'elizabeth', 'luiza', 'camila', 'pedro', 'generic'];
 
         membersOrder.forEach(member => {
@@ -309,14 +313,13 @@ function renderMenu() {
     const now = new Date();
     const day = now.getDay();
     const menu = MENU_SEMANA[day];
-
     const sections = ['cafe', 'almoco', 'lanche', 'jantar'];
 
     sections.forEach(sec => {
         const el = document.getElementById(`menu-${sec}`);
         if (el) {
             let html = '';
-            if (menu[sec]) {
+            if (menu && menu[sec]) {
                 menu[sec].forEach(item => {
                     if (item && item.trim() !== '') {
                         html += `<div class="m-item">${item}</div>`;
@@ -379,7 +382,7 @@ function updateTraffic() {
     }, (response, status) => {
         if (status === "OK") {
             const element = response.rows[0].elements[0];
-            if (element.status === "OK") {
+            if (element && element.status === "OK") {
                 const durationText = element.duration_in_traffic ? element.duration_in_traffic.text : element.duration.text;
                 const durationValue = element.duration_in_traffic ? element.duration_in_traffic.value : element.duration.value;
 
@@ -389,24 +392,42 @@ function updateTraffic() {
             }
         } else {
             console.error("Erro no Google Maps SDK:", status);
-            // Fallback simulação
             const randomTime = Math.floor(Math.random() * (25 - 18 + 1) + 18);
             timeEl.textContent = `${randomTime} min`;
         }
     });
 }
 
-// Contagem Regressiva
+// Contagem Regressiva Customizável
 function updateCountdown() {
     const daysEl = document.getElementById('countdown-days');
+    const labelEl = document.getElementById('countdown-label');
     if (!daysEl) return;
 
+    const labelText = COUNTDOWN_CONFIG.label || "aniversário Pedro Henrique";
+    if (labelEl) {
+        labelEl.textContent = `dias para ${labelText}`;
+    }
+
+    if (!COUNTDOWN_CONFIG.targetDate) return;
+
     const now = new Date();
-    const target = new Date(PEDRO_BDAY);
+    now.setHours(0, 0, 0, 0);
+
+    const parts = COUNTDOWN_CONFIG.targetDate.split('-');
+    if (parts.length < 3) return;
+    const target = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    target.setHours(0, 0, 0, 0);
+
     const diff = target - now;
     const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
 
-    daysEl.textContent = days;
+    if (days < 0) {
+        daysEl.textContent = "0";
+        if (labelEl) labelEl.textContent = `Hoje é o dia de ${labelText}! 🎉`;
+    } else {
+        daysEl.textContent = days;
+    }
 }
 
 // Memórias Reais - Google Photos API via PHP
@@ -419,7 +440,6 @@ async function updateMemory() {
         const response = await fetch('get_memories.php');
         const memories = await response.json();
 
-        // Tratamento de erro retornado pela API
         if (memories && memories.error) {
             console.error("Erro do servidor de memórias:", memories.error);
             if (captionEl) captionEl.textContent = "Erro: " + memories.error;
@@ -431,7 +451,6 @@ async function updateMemory() {
             const randomIdx = Math.floor(Math.random() * memories.length);
             const memory = memories[randomIdx];
 
-            // Se for link do Google (tem baseUrl), adiciona o tamanho. Se for Unsplash, usa direto.
             const finalUrl = memory.url.includes('googleusercontent') ? memory.url + "=w1200" : memory.url;
 
             imgEl.style.opacity = 0;
@@ -447,15 +466,26 @@ async function updateMemory() {
     }
 }
 
-// Clima Compacto com Previsão de 4h
+// Clima com Localização Configurável
 async function updateWeather() {
     try {
-        const response = await fetch(WEATHER_API);
+        const lat = WEATHER_LOCATION.lat || -23.1791;
+        const lon = WEATHER_LOCATION.lon || -45.8872;
+        const cityName = WEATHER_LOCATION.city || "São José dos Campos";
+
+        const cityEl = document.getElementById('weather-city');
+        if (cityEl) {
+            cityEl.textContent = cityName;
+            cityEl.title = `Previsão para ${cityName}`;
+        }
+
+        const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,relativehumidity_2m,weathercode&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=2`;
+        const response = await fetch(weatherUrl);
         const data = await response.json();
 
         // Atual
         const currentTemp = Math.round(data.current_weather.temperature);
-        const isDay = data.current_weather.is_day; // Pega se é dia ou noite
+        const isDay = data.current_weather.is_day;
         const weatherTempEl = document.getElementById('weather-temp');
         const weatherIconEl = document.getElementById('weather-icon');
 
@@ -478,7 +508,7 @@ async function updateWeather() {
             for (let i = 1; i <= 6; i++) {
                 const hourIdx = currentHour + i;
                 const targetHour = hourIdx % 24;
-                const isTargetDay = (targetHour >= 6 && targetHour < 18) ? 1 : 0; // Regra: dia entre 6h e 18h
+                const isTargetDay = (targetHour >= 6 && targetHour < 18) ? 1 : 0;
                 const temp = Math.round(data.hourly.temperature_2m[hourIdx]);
                 const icon = getWeatherIcon(data.hourly.weathercode[hourIdx], isTargetDay);
 
@@ -496,7 +526,170 @@ async function updateWeather() {
     }
 }
 
-// Carregar configurações do D1 Database
+// ==========================================
+// SISTEMA DE MÚSICA DE FUNDO (ÁUDIO SEM VÍDEO)
+// ==========================================
+let ytMusicPlayer = null;
+let nativeAudioPlayer = null;
+let isMusicPlaying = false;
+let isYouTubeAudio = false;
+
+function setMusicButtonVisual(playing) {
+    isMusicPlaying = playing;
+    const btn = document.getElementById('btn-music-toggle');
+    if (!btn) return;
+
+    if (playing) {
+        btn.classList.remove('paused', 'disabled');
+        btn.classList.add('playing');
+        btn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+        btn.title = "Música tocando (clique para pausar)";
+    } else {
+        btn.classList.remove('playing');
+        btn.classList.add('paused');
+        btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+        btn.title = "Música pausada (clique para tocar)";
+    }
+}
+
+function initBackgroundMusic() {
+    const btn = document.getElementById('btn-music-toggle');
+    if (!BACKGROUND_MUSIC.enabled || !BACKGROUND_MUSIC.url) {
+        if (btn) {
+            btn.classList.add('disabled');
+            btn.title = "Música de fundo desativada nas Configurações";
+            btn.innerHTML = '<i class="fa-solid fa-music-slash"></i>';
+            btn.onclick = () => window.location.href = 'admin.html';
+        }
+        return;
+    }
+
+    const url = BACKGROUND_MUSIC.url.trim();
+    const volume = BACKGROUND_MUSIC.volume !== undefined ? BACKGROUND_MUSIC.volume : 25;
+
+    // Checar se é YouTube
+    const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?.*v=|embed\/|live\/|shorts\/))([\w-]{11})/);
+
+    if (ytMatch && ytMatch[1]) {
+        isYouTubeAudio = true;
+        const videoId = ytMatch[1];
+        setupYouTubeMusic(videoId, volume);
+    } else {
+        isYouTubeAudio = false;
+        setupNativeAudio(url, volume);
+    }
+
+    if (btn) {
+        btn.onclick = toggleMusicPlayback;
+    }
+
+    // Desbloqueio de autoplay no primeiro toque/clique caso o navegador bloqueie
+    const unlockAutoplay = () => {
+        if (!isMusicPlaying) {
+            if (isYouTubeAudio && ytMusicPlayer && typeof ytMusicPlayer.playVideo === 'function') {
+                ytMusicPlayer.playVideo();
+            } else if (nativeAudioPlayer) {
+                nativeAudioPlayer.play().then(() => setMusicButtonVisual(true)).catch(() => {});
+            }
+        }
+        document.removeEventListener('click', unlockAutoplay);
+    };
+    document.addEventListener('click', unlockAutoplay, { once: true });
+}
+
+function setupYouTubeMusic(videoId, volume) {
+    const container = document.getElementById('bg-music-player-container');
+    if (!container) return;
+
+    // Criar tag para o player do YouTube
+    const ytDiv = document.createElement('div');
+    ytDiv.id = 'yt-bg-iframe';
+    container.innerHTML = '';
+    container.appendChild(ytDiv);
+
+    const onYouTubeReady = () => {
+        ytMusicPlayer = new YT.Player('yt-bg-iframe', {
+            height: '1',
+            width: '1',
+            videoId: videoId,
+            playerVars: {
+                autoplay: 1,
+                loop: 1,
+                playlist: videoId,
+                controls: 0,
+                disablekb: 1,
+                fs: 0,
+                modestbranding: 1
+            },
+            events: {
+                onReady: (event) => {
+                    event.target.setVolume(volume);
+                    event.target.playVideo();
+                },
+                onStateChange: (event) => {
+                    if (event.data === YT.PlayerState.PLAYING) {
+                        setMusicButtonVisual(true);
+                    } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+                        setMusicButtonVisual(false);
+                    }
+                }
+            }
+        });
+    };
+
+    if (window.YT && window.YT.Player) {
+        onYouTubeReady();
+    } else {
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        window.onYouTubeIframeAPIReady = onYouTubeReady;
+    }
+}
+
+function setupNativeAudio(url, volume) {
+    if (!nativeAudioPlayer) {
+        nativeAudioPlayer = new Audio();
+        nativeAudioPlayer.loop = true;
+    }
+
+    nativeAudioPlayer.src = url;
+    nativeAudioPlayer.volume = volume / 100;
+    
+    nativeAudioPlayer.play()
+        .then(() => setMusicButtonVisual(true))
+        .catch((err) => {
+            console.log("Autoplay do áudio aguardando clique do usuário:", err);
+            setMusicButtonVisual(false);
+        });
+
+    nativeAudioPlayer.onplaying = () => setMusicButtonVisual(true);
+    nativeAudioPlayer.onpause = () => setMusicButtonVisual(false);
+}
+
+function toggleMusicPlayback() {
+    if (isYouTubeAudio && ytMusicPlayer) {
+        if (isMusicPlaying) {
+            ytMusicPlayer.pauseVideo();
+            setMusicButtonVisual(false);
+        } else {
+            ytMusicPlayer.playVideo();
+            setMusicButtonVisual(true);
+        }
+    } else if (nativeAudioPlayer) {
+        if (nativeAudioPlayer.paused) {
+            nativeAudioPlayer.play()
+                .then(() => setMusicButtonVisual(true))
+                .catch(e => console.error("Erro ao tocar áudio:", e));
+        } else {
+            nativeAudioPlayer.pause();
+            setMusicButtonVisual(false);
+        }
+    }
+}
+
+// Carregar configurações do Backend
 async function loadDbSettings() {
     try {
         const response = await fetch('settings.php');
@@ -506,22 +699,25 @@ async function loadDbSettings() {
                 if (settings.birthdays) BIRTHDAYS = settings.birthdays;
                 if (settings.menuSemana) MENU_SEMANA = settings.menuSemana;
                 if (settings.photoTransitionTime) window.photoTransitionTime = parseInt(settings.photoTransitionTime);
-                console.log("Configurações carregadas do D1 com sucesso!");
+                if (settings.weatherLocation) WEATHER_LOCATION = settings.weatherLocation;
+                if (settings.countdown) COUNTDOWN_CONFIG = settings.countdown;
+                if (settings.backgroundMusic) BACKGROUND_MUSIC = settings.backgroundMusic;
+                console.log("Configurações carregadas da API com sucesso!");
                 return;
             }
         }
     } catch (e) {
-        console.warn("D1 inacessível, utilizando dados locais (localStorage/fallback):", e);
+        console.warn("Backend inacessível, utilizando dados locais (localStorage/fallback):", e);
     }
 }
 
-// Inicialização
+// Inicialização Geral
 async function init() {
     await loadDbSettings();
 
     const tasks = [
         updateClock,
-        fetchCalendarEvents, // Busca do Google Calendar
+        fetchCalendarEvents,
         renderBirthdays,
         renderMenu,
         renderStatus,
@@ -529,7 +725,8 @@ async function init() {
         updateTraffic,
         updateCountdown,
         updateMemory,
-        updateWeather
+        updateWeather,
+        initBackgroundMusic
     ];
 
     tasks.forEach(task => {
@@ -547,6 +744,7 @@ async function init() {
     setInterval(renderMenu, 3600000);
     setInterval(renderStatus, 3600000); // 1h
     setInterval(updateMarket, 900000); // 15 min
+    setInterval(updateCountdown, 3600000); // 1h
     
     // Tempo de transição dinâmico de memórias
     const savedTransition = window.photoTransitionTime || (localStorage.getItem("photoTransitionTime") ? parseInt(localStorage.getItem("photoTransitionTime")) : 15);

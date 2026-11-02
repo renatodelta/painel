@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel da Família - Modern TV</title>
-    <link rel="stylesheet" href="style.css?v=1.5.0">
+    <link rel="stylesheet" href="style.css?v=1.6.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600;800&display=swap" rel="stylesheet">
@@ -21,6 +21,14 @@
             <div id="current-date" class="date-text">Domingo, 10 de Maio de 2025</div>
         </div>
         <div class="header-right">
+            <div class="header-actions">
+                <button id="btn-music-toggle" class="header-btn" title="Música de Fundo (Clique para Pausar/Tocar)" aria-label="Música de Fundo">
+                    <i class="fa-solid fa-music"></i>
+                </button>
+                <a href="admin.html" class="header-btn" title="Configurações do Painel" aria-label="Configurações">
+                    <i class="fa-solid fa-gear"></i>
+                </a>
+            </div>
             <div id="clock" class="clock-text">10:10</div>
         </div>
     </header>
@@ -36,6 +44,7 @@
                             <span id="weather-max" class="max">↑ --°</span>
                             <span id="weather-min" class="min">↓ --°</span>
                         </div>
+                        <div id="weather-city" class="weather-city-name">São José dos Campos</div>
                     </div>
                     <div class="weather-icon-box">
                         <img id="weather-icon" src="" alt="Clima">
@@ -62,7 +71,7 @@
                 <div class="card-header-mini">Contagem Regressiva</div>
                 <div class="countdown-content">
                     <span id="countdown-days" class="days">--</span>
-                    <span class="label">dias para o aniversário Pedro Henrique</span>
+                    <span id="countdown-label" class="label">dias para o aniversário Pedro Henrique</span>
                 </div>
             </section>
 
@@ -131,10 +140,14 @@
             </div>
         </div>
     </main>
+
+    <!-- Container Invisível para Música de Fundo (Vídeo Oculto) -->
+    <div id="bg-music-player-container" style="position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none;z-index:-999;"></div>
+
     <!-- Google Maps API -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgrEtdMlcFMvIGBXdI_jekrnVVGUNa7I8&loading=async"
         async></script>
-    <script src="app.js?v=1.5.0"></script>
+    <script src="app.js?v=1.6.0"></script>
 </body>
 
 </html>

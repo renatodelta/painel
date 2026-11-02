@@ -69,6 +69,75 @@ body {
     color: var(--text-dim);
 }
 
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: var(--glass-blur);
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.header-btn:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.06);
+}
+
+.header-btn.playing {
+    color: #32d74b;
+    border-color: rgba(50, 215, 75, 0.5);
+    box-shadow: 0 0 15px rgba(50, 215, 75, 0.25);
+    animation: pulseGlow 2s infinite ease-in-out;
+}
+
+.header-btn.paused {
+    color: #ff9500;
+}
+
+.header-btn.disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 10px rgba(50, 215, 75, 0.2); }
+    50% { box-shadow: 0 0 20px rgba(50, 215, 75, 0.4); }
+}
+
+.weather-city-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    max-width: 130px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .clock-text {
     font-size: 70px;
     font-weight: 800;
